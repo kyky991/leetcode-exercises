@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <unordered_set>
+#include <unordered_map>
 
 using namespace std;
 
@@ -280,6 +281,76 @@ int pathSum(TreeNode* root, int sum)
 
     return count;
 }
+
+//501. Find Mode in Binary Search Tree
+void findMode(TreeNode *root, unordered_map<int, int> &m)
+{
+    if (root) {
+        m[root->val]++;
+        findMode(root->left, &m);
+        findMode(root->right, m);
+    }
+}
+
+vector<int> findMode(TreeNode* root)
+{
+    int m = 0;
+    unordered_map<int, int> map;
+    vector<int> res;
+
+    findMode(root, map);
+
+    for (auto it : map) {
+        if (it.second > m) {
+            m = it.second;
+            res.clear();
+            res.push_back(it.first);
+        } else if (it.second == m) {
+            res.push_back(it.first);
+        }
+    }
+
+    return res;
+}
+
+//538. Convert BST to Greater Tree
+void convertBST(TreeNode *node, int &sum)
+{
+    if (node) {
+        convertBST(node->right, sum);
+
+        sum += node->val;
+        node->val = sum;
+
+        convertBST(node->left, sum);
+    }
+}
+
+TreeNode* convertBST(TreeNode* root)
+{
+    int sum = 0;
+
+    convertBST(root, sum);
+
+    return root;
+}
+
+//543. Diameter of Binary Tree
+int diameterOfBinaryTree(TreeNode* root)
+{
+    if (root) {
+        int m = 0;
+        int ldepth = maxDepth(root->left);
+        int rdepth = maxDepth(root->right);
+        m = max(m, ldepth + rdepth);
+
+        return max(max(m, diameterOfBinaryTree(root->left)), diameterOfBinaryTree(root->right));
+    } else {
+        return 0;
+    }
+}
+
+
 
 #endif // LEETCODEEASYTREE
 
