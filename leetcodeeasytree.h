@@ -84,7 +84,7 @@ int maxDepth(TreeNode* root)
 void levelOrder(TreeNode *node, int level, vector<vector<int>> &v)
 {
     if (node) {
-        if (level > v.size()) {
+        if (level >= v.size()) {
             v.push_back(vector<int>());
         }
         v[level].push_back(node->val);
@@ -102,7 +102,7 @@ vector<vector<int>> levelOrderBottom(TreeNode* root)
 
     levelOrder(root, 0, res);
 
-    reverse();
+    reverse(res.begin(), res.end());
 
     return res;
 }
@@ -350,7 +350,191 @@ int diameterOfBinaryTree(TreeNode* root)
     }
 }
 
+//563. Binary Tree Tilt
+int findTilt(TreeNode *node, int &sum)
+{
+    if (node) {
+        int left = findTilt(node->left, sum);
+        int right = findTilt(node->right, sum);
+        sum += abs(left - right);
+        return node->val + left + right;
+    } else {
+        return 0;
+    }
+}
 
+int findTilt(TreeNode* root)
+{
+    int sum = 0;
+    if (root) {
+        findTilt(root, sum);
+        return sum;
+    } else {
+        return 0;
+    }
+}
 
+//572. Subtree of Another Tree
+bool isSubtree(TreeNode* s, TreeNode* t)
+{
+    if (isSameTree(s, t)) {
+        return true;
+    } else {
+        if (s)
+            return isSubtree(s->left, t) || isSubtree(s->right, t);
+        else
+            return false;
+    }
+}
+
+//606. Construct String from Binary Tree
+void tree2str(TreeNode *node, string &s)
+{
+    if (node) {
+        s += to_string(node->val);
+        if (node->left || node->right) {
+            s += '(';
+            tree2str(node->left, s);
+            s += ')';
+        }
+        if (node->right) {
+            s += '(';
+            tree2str(node->right, s);
+            s += ')';
+        }
+    }
+}
+
+string tree2str(TreeNode* t)
+{
+    if (t) {
+        string s = to_string(t->val);
+        if (t->left || t->right)
+            s += '(' + tree2str(t->left) + ')';
+        if (t->right)
+            s += '(' + tree2str(t->right) + ')';
+        return s;
+    } else {
+        return "";
+    }
+
+    string res = "";
+
+    tree2str(t, res);
+
+    return res;
+}
+
+//617. Merge Two Binary Trees
+TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2)
+{
+    if (t1 && t2) {
+        t1->val += t2->val;
+        t1->left = mergeTrees(t1->left, t2->left);
+        t1->right = mergeTrees(t1->right, t2->right);
+    } else if (!t1 && t2) {
+        t1 = t2;
+    }
+    return t1;
+}
+
+//637. Average of Levels in Binary Tree
+vector<double> averageOfLevels(TreeNode* root)
+{
+    vector<vector<int>> res;
+
+    levelOrder(root, 0, res);
+
+    vector<double> v;
+    for (int i = 0; i < res.size(); ++i) {
+        double total = 0.0;
+        for (int j = 0; j < res[i].size(); ++j) {
+            total += res[i][j];
+        }
+        if (res[i].size() > 0) {
+            v.push_back(total / res[i].size());
+        }
+    }
+    return v;
+}
+
+//653. Two Sum IV - Input is a BST
+void treeItems(TreeNode *node, vector<int> &v)
+{
+    if (node) {
+        v.push_back(node->val);
+        treeItems(node->left, v);
+        treeItems(node->right, v);
+    }
+}
+
+bool findTarget(TreeNode* root, int k)
+{
+    vector<int> v;
+    treeItems(root, v);
+
+    for (int i = 0; i < v.size() - 1; ++i) {
+        for (int j = i + 1; j < v.size(); ++j) {
+            if (v[i] + v[j] == k)
+                return true;
+        }
+    }
+    return false;
+}
+
+//669. Trim a Binary Search Tree
+TreeNode* trimBST(TreeNode* root, int L, int R)
+{
+
+}
+
+//671. Second Minimum Node In a Binary Tree
+int minVal(TreeNode *node, int first)
+{
+    if (node) {
+        if (node->val != first)
+            return node->val;
+        int left = minVal(node->left, first);
+        int right = minVal(node->right, first);
+        if (left == -1)
+            return right;
+        if (right == -1)
+            return left;
+        return min(left, right);
+    } else {
+        return -1;
+    }
+}
+
+int findSecondMinimumValue(TreeNode* root)
+{
+    if (root) {
+        return minVal(root, root->val);
+    } else {
+        return -1;
+    }
+}
+
+//687. Longest Univalue Path
+int longestUnivaluePath(TreeNode* root)
+{
+    if (root) {
+        int m = 0;
+        if (root->left || root->right) {
+            if (root->left && root->left->val == root->val) {
+                m++;
+            }
+            if (root->right && root->right->val == root->val) {
+                m++;
+            }
+            m += longestUnivaluePath(root->left);
+            m += longestUnivaluePath(root->right);
+            return m;
+        }
+        return max(max(m, longestUnivaluePath(root->left)), longestUnivaluePath(root->right));
+    } else {
+        return 0;
+    }
+}
 #endif // LEETCODEEASYTREE
 
