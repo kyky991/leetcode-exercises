@@ -485,7 +485,19 @@ bool findTarget(TreeNode* root, int k)
 //669. Trim a Binary Search Tree
 TreeNode* trimBST(TreeNode* root, int L, int R)
 {
+    if (root) {
+        if (root->val < L) {
+            return trimBST(root->right, L, R);
+        }
+        if (root->val > R) {
+            return trimBST(root->left, L, R);
+        }
+        root->left = trimBST(root->left, L, R);
+        root->right = trimBST(root->right, L, R);
+        return root;
+    }
 
+    return NULL;
 }
 
 //671. Second Minimum Node In a Binary Tree
@@ -516,25 +528,26 @@ int findSecondMinimumValue(TreeNode* root)
 }
 
 //687. Longest Univalue Path
+int univaluePath(TreeNode *node, int val)
+{
+    if (node) {
+        if (node->val == val) {
+            return 1 + max(univaluePath(node->left, val), univaluePath(node->right, val));
+        }
+    }
+
+    return 0;
+}
+
 int longestUnivaluePath(TreeNode* root)
 {
     if (root) {
-        int m = 0;
-        if (root->left || root->right) {
-            if (root->left && root->left->val == root->val) {
-                m++;
-            }
-            if (root->right && root->right->val == root->val) {
-                m++;
-            }
-            m += longestUnivaluePath(root->left);
-            m += longestUnivaluePath(root->right);
-            return m;
-        }
+        int m = univaluePath(root->left, root->val) + univaluePath(root->right, root->val);
         return max(max(m, longestUnivaluePath(root->left)), longestUnivaluePath(root->right));
     } else {
         return 0;
     }
 }
+
 #endif // LEETCODEEASYTREE
 
