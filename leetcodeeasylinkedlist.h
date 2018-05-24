@@ -1,13 +1,9 @@
 #ifndef LEETCODEEASYLINKEDLIST
 #define LEETCODEEASYLINKEDLIST
 
-//21. Merge Two Sorted Lists
-struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode(int x) : val(x), next(NULL) {}
-};
+#include "common.h"
 
+//21. Merge Two Sorted Lists
 ListNode* mergeTwoLists(ListNode* l1, ListNode* l2)
 {
     ListNode head(0);
