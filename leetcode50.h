@@ -107,7 +107,7 @@ double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2)
 }
 
 //5. Longest Palindromic Substring
-string longestPalindrome(string s)
+string longestPalindromeSubstring(string s)
 {
     if (s.empty())
         return "";
@@ -137,5 +137,82 @@ string longestPalindrome(string s)
 
     return s.substr(start, maxLen);
 }
+
+//6. ZigZag Conversion
+string convert(string s, int numRows)
+{
+    vector<string> ss(numRows);
+    int size = s.size();
+
+    int i = 0;
+    while (i < size) {
+        for (int m = 0; m < numRows && i < size; ++m) {
+            ss[m].push_back(s[i++]);
+        }
+        for (int n = numRows - 2; n > 0 && i < size; --n) {
+            ss[n].push_back(s[i++]);
+        }
+    }
+    string res = "";
+    for (int i = 0; i < ss.size(); ++i) {
+        res += ss[i];
+    }
+    return res;
+}
+
+//7. Reverse Integer
+int reverse(int x) {
+    long result = 0;
+    while (x != 0) {
+        result = result * 10 + x % 10;
+        x /= 10;
+        if (result < INT_MIN || result > INT_MAX)
+            return 0;
+    }
+    return result;
+}
+
+//8. String to Integer (atoi)
+int myAtoi(string str)
+{
+    int sign = 1, base = 0, i = 0;
+    while (str[i] == ' ') {
+        i++;
+    }
+    if (str[i] == '-' || str[i] == '+') {
+        sign = 1 - 2 * (str[i++] == '-');
+    }
+
+    while (str[i] >= '0' && str[i] <= '9') {
+        if (base > INT_MAX / 10 || (base == INT_MAX / 10 && str[i] - '0' > 7)) {
+            if (sign == 1)
+                return INT_MAX;
+            else
+                return INT_MIN;
+        }
+        base = 10 * base + (str[i++] - '0');
+    }
+    return base * sign;
+}
+
+//9. Palindrome Number
+bool isPalindrome(int x)
+{
+    if (x < 0 || (x != 0 && x % 10 == 0))
+        return false;
+    int result = 0;
+    while (x > result) {
+        result = result * 10 + x % 10;
+        x /= 10;
+    }
+    return (result == x || x == result / 10);
+}
+
+//10. Regular Expression Matching
+bool isMatch(string s, string p)
+{
+
+}
+
 #endif // LEETCODE50
 
