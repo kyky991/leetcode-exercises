@@ -211,8 +211,152 @@ bool isPalindrome(int x)
 //10. Regular Expression Matching
 bool isMatch(string s, string p)
 {
+    int m = s.size();
+    int n = p.size();
 
+    vector<vector<bool>> f(m + 1, vector<bool>(n + 1, false));
+    f[0][0] = true;
+
+    for (int i = 1; i <= m; ++i) {
+        f[i][0] = false;
+    }
+    for (int j = 1; j <= n; ++j) {
+        f[0][j] = j > 1 && '*' == p[j - 1] && f[0][j - 2];
+    }
+
+    for (int i = 1; i <= m; ++i) {
+        for (int j = 1; j <= n; ++j) {
+            if (p[j - 1] != '*') {
+                f[i][j] = f[i - 1][j - 1] &&(s[i - 1] == p[j - 1] || '.' == p[j - 1]);
+            } else {
+                f[i][j] = f[i][j - 2] || (s[i - 1] == p[j - 2] || '.' == p[j - 2]) && f[i - 1][j];
+            }
+        }
+    }
+
+    return f[m][n];
 }
 
+//11. Container With Most Water
+int maxArea(vector<int>& height)
+{
+    int res = 0;
+    int i = 0, j = height.size() - 1;
+    while (i < j) {
+        int h = min(height[i], height[j]);
+        res = max(res, (j - i) * h);
+        while (height[i] <= h && i < j)
+            i++;
+        while (height[j] <= h && i < j)
+            j--;
+    }
+    return res;
+}
+
+//12. Integer to Roman
+string intToRoman(int num)
+{
+    string res = "";
+
+    int q = num / 1000;
+    int r = num % 1000;
+    if (q > 0) {
+        res.append(q, 'M');
+    }
+
+    q = r;
+    r = q % 100;
+    q = q / 100;
+    if (q >= 9) {
+        res += "CM";
+    } else if (q >= 5) {
+        res += 'D';
+        res.append(q - 5, 'C');
+    } else if (q >= 4) {
+        res += "CD";
+    } else {
+        res.append(q, 'C');
+    }
+
+    q = r;
+    r = q % 10;
+    q = q / 10;
+    if (q >= 9) {
+        res += "XC";
+    } else if (q >= 5) {
+        res += 'L';
+        res.append(q - 5, 'X');
+    } else if (q >= 4) {
+        res += "XL";
+    } else {
+        res.append(q, 'X');
+    }
+
+    q = r;
+
+    if (q >= 9) {
+        res += "IX";
+    } else if (q >= 5) {
+        res += 'V';
+        res.append(q - 5, 'I');
+    } else if (q >= 4) {
+        res += "IV";
+    } else {
+        res.append(q, 'I');
+    }
+    return res;
+}
+
+//13. Roman to Integer
+int romanToInt(string s)
+{
+    unordered_map<char, int> lut = {
+        { 'I', 1 },
+        { 'V', 5 },
+        { 'X', 10 },
+        { 'L', 50 },
+        { 'C', 100 },
+        { 'D', 500 },
+        { 'M', 1000 }
+    };
+
+    int result = lut[s.back()];
+    for (int i = s.length() - 2; i >= 0; --i) {
+        if (lut[s[i + 1]] <= lut[s[i]]) {
+            result += lut[s[i]];
+        } else {
+            result -= lut[s[i]];
+        }
+    }
+    return result;
+}
+
+//14. Longest Common Prefix
+string longestCommonPrefix(vector<string>& strs)
+{
+    int size = strs.size();
+    if (size < 1)
+        return "";
+
+    string ret = "";
+    string pre = strs[0];
+    int j = 0;
+    while (j < pre.size()) {
+        int i = 1;
+        while (i < size) {
+            if (j < strs[i].size() && strs[i][j] == pre[j]) {
+                i++;
+            } else {
+                j = pre.size();
+                break;
+            }
+        }
+        if (i == size)
+            ret.push_back(pre[j]);
+
+        j++;
+    }
+    return ret;
+}
 #endif // LEETCODE50
 
