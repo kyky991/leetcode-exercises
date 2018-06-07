@@ -9,6 +9,7 @@
 using namespace std;
 
 //14. Longest Common Prefix
+/*
 string longestCommonPrefix(vector<string>& strs)
 {
     int size = strs.size();
@@ -35,6 +36,7 @@ string longestCommonPrefix(vector<string>& strs)
     }
     return ret;
 }
+*/
 
 //20. Valid Parentheses
 bool isValid(string s)

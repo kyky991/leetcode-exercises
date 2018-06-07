@@ -358,5 +358,73 @@ string longestCommonPrefix(vector<string>& strs)
     }
     return ret;
 }
+
+//15. 3Sum
+vector<vector<int>> threeSum(vector<int>& nums)
+{
+    if (nums.size() < 3)
+        return vector<vector<int>>();
+
+    sort(nums.begin(), nums.end());
+
+    vector<vector<int>> res;
+
+    for (int i = 0; i < nums.size() - 2; ++i) {
+        if (i > 0 && nums[i] == nums[i - 1]) {
+            continue;
+        }
+        int start = i + 1, end = nums.size() - 1;
+        while (start < end) {
+            if (nums[start] + nums[end] == -nums[i]) {
+                vector<int> v;
+                v.push_back(nums[i]);
+                v.push_back(nums[start]);
+                v.push_back(nums[end]);
+                res.push_back(v);
+
+                while (start < end && nums[start] == nums[start + 1])
+                    start++;
+                while (start < end && nums[end - 1] == nums[end])
+                    end--;
+
+                start++;
+                end--;
+            } else if (nums[start] + nums[end] < -nums[i]) {
+                start++;
+            } else {
+                end--;
+            }
+        }
+    }
+
+    return res;
+}
+
+//16. 3Sum Closest
+int threeSumClosest(vector<int>& nums, int target)
+{
+    int res = nums[0] + nums[1] + nums[nums.size() - 1];
+
+    sort(nums.begin(), nums.end());
+
+    for (int i = 0; i < nums.size() - 2; ++i) {
+        int start = i + 1, end = nums.size() - 1;
+        while (start < end) {
+            int sum = nums[start] + nums[end] + nums[i];
+            if (sum > target) {
+                end--;
+            } else {
+                start++;
+            }
+
+            if (abs(sum - target) < abs(res - target)) {
+                res = sum;
+            }
+        }
+    }
+
+    return res;
+}
+
 #endif // LEETCODE50
 
