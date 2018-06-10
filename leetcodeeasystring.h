@@ -8,8 +8,8 @@
 
 using namespace std;
 
-//14. Longest Common Prefix
 /*
+//14. Longest Common Prefix
 string longestCommonPrefix(vector<string>& strs)
 {
     int size = strs.size();
@@ -38,6 +38,7 @@ string longestCommonPrefix(vector<string>& strs)
 }
 */
 
+/*
 //20. Valid Parentheses
 bool isValid(string s)
 {
@@ -56,6 +57,7 @@ bool isValid(string s)
     }
     return sk.empty();
 }
+*/
 
 //28. Implement strStr()
 int strStr(string haystack, string needle)

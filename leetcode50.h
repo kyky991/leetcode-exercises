@@ -2,6 +2,7 @@
 #define LEETCODE50
 
 #include "common.h"
+#include "leetcodeeasylinkedlist.h"
 
 //1. Two Sum
 vector<int> twoSum(vector<int>& nums, int target)
@@ -425,6 +426,162 @@ int threeSumClosest(vector<int>& nums, int target)
 
     return res;
 }
+
+//17. Letter Combinations of a Phone Number
+vector<string> letterCombinations(string digits)
+{
+    if (digits.empty())
+        return vector<string>();
+
+    vector<string> m = { "", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz" };
+
+    vector<string> res;
+    res.push_back("");
+
+    for (int i = 0; i < digits.size(); ++i) {
+        string s = m[digits[i] - '0'];
+        vector<string> tmp;
+        for (int j = 0; j < s.size(); ++j) {
+            for (int t = 0; t < res.size(); ++t) {
+                tmp.push_back(res[t] + s[j]);
+            }
+        }
+        res = tmp;
+    }
+    return res;
+}
+
+//18. 4Sum
+vector<vector<int>> fourSum(vector<int>& nums, int target)
+{
+    if (nums.size() < 4)
+        return vector<vector<int>>();
+
+    sort(nums.begin(), nums.end());
+
+    vector<vector<int>> res;
+
+    for (int i = 0; i < nums.size() - 3; ++i) {
+        if (i > 0 && nums[i] == nums[i - 1]) {
+            continue;
+        }
+        for (int j = i + 1; j < nums.size() - 2; ++j) {
+            if (j > i + 1 && nums[j] == nums[j - 1]) {
+                continue;
+            }
+            int start = j + 1, end = nums.size() - 1;
+            int sum = target - (nums[i] + nums[j]);
+            while (start < end) {
+                if (nums[start] + nums[end] == sum) {
+                    vector<int> v;
+                    v.push_back(nums[i]);
+                    v.push_back(nums[j]);
+                    v.push_back(nums[start]);
+                    v.push_back(nums[end]);
+                    res.push_back(v);
+
+                    while (start < end && nums[start] == nums[start + 1])
+                        start++;
+                    while (start < end && nums[end - 1] == nums[end])
+                        end--;
+
+                    start++;
+                    end--;
+                } else if (nums[start] + nums[end] < sum) {
+                    start++;
+                } else {
+                    end--;
+                }
+            }
+        }
+    }
+
+    return res;
+}
+
+//19. Remove Nth Node From End of List
+ListNode* removeNthFromEnd(ListNode* head, int n)
+{
+#if 1
+    ListNode **t1 = &head, *t2 = head;
+    for (int i = 1; i < n; ++i) {
+        t2 = t2->next;
+    }
+    while (t2->next) {
+        t1 = &((*t1)->next);
+        t2 = t2->next;
+    }
+    *t1 = (*t1)->next;
+    return head;
+#else
+    int size = 0;
+    ListNode *tmp = head;
+    while (tmp) {
+        size++;
+        tmp = tmp->next;
+    }
+
+    tmp = head;
+    ListNode *pre = NULL;
+
+    int i = 0;
+    while (tmp) {
+        if (i == size - n) {
+            if (pre)
+                pre->next = tmp->next;
+            else
+                head = head->next;
+            break;
+        }
+        i++;
+        pre = tmp;
+        tmp = tmp->next;
+    }
+
+    return head;
+#endif
+}
+
+//20. Valid Parentheses
+bool isValid(string s)
+{
+    stack<char> sk;
+    for (auto c : s) {
+        if (c == '(')
+            sk.push(')');
+        else if (c == '{')
+            sk.push('}');
+        else if (c == '[')
+            sk.push(']');
+        else if (!sk.empty() && c == sk.top())
+            sk.pop();
+        else
+            return false;
+    }
+    return sk.empty();
+}
+
+//21. Merge Two Sorted Lists
+ListNode* mergeTwoLists(ListNode* l1, ListNode* l2)
+{
+    ListNode head(0);
+    ListNode *tmp = &head;
+    while (l1 && l2) {
+        if (l1->val < l2->val) {
+            tmp->next = l1;
+            l1 = l1->next;
+        } else {
+            tmp->next = l2;
+            l2 = l2->next;
+        }
+        tmp = tmp->next;
+    }
+    tmp->next = l1 ? l1 : l2;
+
+    return head.next;
+}
+
+
 
 #endif // LEETCODE50
 

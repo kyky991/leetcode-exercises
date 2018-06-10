@@ -4,8 +4,6 @@
 #include <stdint.h>
 #include <iostream>
 
-#include <QDebug>
-
 using namespace std;
 
 //190. Reverse Bits
@@ -25,8 +23,6 @@ uint32_t reverseBits(uint32_t n)
     }
 
     reverse(s.begin(), s.end());
-
-    qDebug() << s.c_str();
 
     uint32_t res = 0;
     int p = 32 - s.size();

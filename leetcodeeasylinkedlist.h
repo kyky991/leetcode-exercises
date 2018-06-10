@@ -3,6 +3,7 @@
 
 #include "common.h"
 
+/*
 //21. Merge Two Sorted Lists
 ListNode* mergeTwoLists(ListNode* l1, ListNode* l2)
 {
@@ -22,6 +23,7 @@ ListNode* mergeTwoLists(ListNode* l1, ListNode* l2)
 
     return head.next;
 }
+*/
 
 //83. Remove Duplicates from Sorted List
 ListNode* deleteDuplicates(ListNode* head)
