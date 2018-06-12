@@ -30,5 +30,7 @@ int main(int argc, char *argv[])
     vector<int> v = {-1};
     threeSum(v);
 
+    vector<string> res = generateParenthesis(3);
+
     return 0;
 }

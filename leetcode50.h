@@ -581,7 +581,175 @@ ListNode* mergeTwoLists(ListNode* l1, ListNode* l2)
     return head.next;
 }
 
+//22. Generate Parentheses
+void generateParenthesis(vector<string> &v, string s, int m, int n)
+{
+    if (m == 0 && n == 0) {
+        v.push_back(s);
+        return;
+    }
 
+    if (m > 0)
+        generateParenthesis(v, s + "(", m - 1, n);
+    if (n > 0 && m < n)
+        generateParenthesis(v, s + ")", m, n - 1);
+}
 
+vector<string> generateParenthesis(int n)
+{
+#if 1
+    vector<string> res;
+    generateParenthesis(res, "", n, n);
+    return res;
+#else
+    unordered_map<string, int> m;
+    int count = 0;
+    while (count < 2 * n) {
+        if (m.empty()) {
+            m["("] = 1;
+        } else {
+            unordered_map<string, int> tmp;
+            for (auto i : m) {
+                int left = i.second;
+                int right = count - i.second;
+                if (left < n) {
+                    tmp[i.first + "("] = left + 1;
+                }
+                if (right < n && left > right)
+                    tmp[i.first + ")"] = left;
+            }
+            m.swap(tmp);
+        }
+
+        count++;
+    }
+
+    vector<string> res;
+    for (auto i : m) {
+        res.push_back(i.first);
+    }
+    return res;
+#endif
+}
+
+//23. Merge k Sorted Lists
+void mergeKLists(vector<ListNode *> &lists, int len)
+{
+    if (len == 1)
+        return;
+
+    int i = 0;
+    while (i < len / 2) {
+        lists[i] = mergeTwoLists(lists[i], lists[len - i - 1]);
+        i++;
+    }
+
+    if (len % 2 == 0)
+        mergeKLists(lists, len / 2);
+    else
+        mergeKLists(lists, len / 2 + 1);
+}
+
+struct compare {
+    bool operator ()(const ListNode *l, const ListNode *r)
+    {
+        return l->val > r->val;
+    }
+};
+
+ListNode* mergeKLists(vector<ListNode*>& lists)
+{
+#if 1
+    priority_queue<ListNode *, vector<ListNode *>, compare> q;
+    for (auto l : lists) {
+        if (l)
+            q.push(l);
+    }
+    if (q.empty())
+        return NULL;
+
+    ListNode *res = q.top();
+    q.pop();
+    if (res->next)
+        q.push(res->next);
+    ListNode *tail = res;
+    while (!q.empty()) {
+        tail->next = q.top();
+        q.pop();
+        tail = tail->next;
+        if (tail->next)
+            q.push(tail->next);
+    }
+    return res;
+#else
+    if (lists.size() > 0) {
+        mergeKLists(lists, lists.size());
+        return lists[0];
+    } else {
+        return NULL;
+    }
+#endif
+}
+
+//24. Swap Nodes in Pairs
+ListNode* swapPairs(ListNode* head)
+{
+#if 1
+    ListNode **pp = &head, *a, *b;
+    while ((a = *pp) && (b = a->next)) {
+        a->next = b->next;
+        b->next = a;
+        *pp = b;
+        pp = &(a->next);
+    }
+    return head;
+#else
+    int i = 0;
+    ListNode *tmp = head;
+    ListNode *pre = NULL;
+    ListNode *res = NULL;
+    while (tmp && tmp->next) {
+        if (i % 2 == 0) {
+            ListNode *next = tmp->next;
+            tmp->next = next->next;
+            next->next = tmp;
+            if (pre)
+                pre->next = next;
+            if (i == 0)
+                res = next;
+        } else {
+            pre = tmp;
+            tmp = tmp->next;
+        }
+        i++;
+    }
+    return res;
+#endif
+}
+
+//25. Reverse Nodes in k-Group
+ListNode* reverseKGroup(ListNode* head, int k)
+{
+    ListNode *cur = head;
+    int count = 0;
+    while (cur && count != k) {
+        cur = cur->next;
+        count++;
+    }
+
+    if (count == k) {
+        cur = reverseKGroup(cur, k);
+
+        while (count--) {
+            ListNode *p = head->next;
+            head->next = cur;
+            cur = head;
+            head = p;
+        }
+
+        head = cur;
+    }
+    return head;
+}
 #endif // LEETCODE50
 
