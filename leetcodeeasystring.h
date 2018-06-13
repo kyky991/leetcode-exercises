@@ -59,6 +59,7 @@ bool isValid(string s)
 }
 */
 
+/*
 //28. Implement strStr()
 int strStr(string haystack, string needle)
 {
@@ -79,6 +80,7 @@ int strStr(string haystack, string needle)
     }
     return j == needle.size() ? i - j : -1;
 }
+*/
 
 //38. Count and Say
 string countAndSay(int n)

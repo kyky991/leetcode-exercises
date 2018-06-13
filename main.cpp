@@ -32,5 +32,10 @@ int main(int argc, char *argv[])
 
     vector<string> res = generateParenthesis(3);
 
+    int j = (int)-2147483648 / (int)-1;
+    int k = -2147483648;
+    int m = -1;
+    std::cout << (k & 0x80000000) << std::endl;
+
     return 0;
 }

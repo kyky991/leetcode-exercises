@@ -751,5 +751,137 @@ ListNode* reverseKGroup(ListNode* head, int k)
     }
     return head;
 }
+
+//26. Remove Duplicates from Sorted Array
+int removeDuplicates(vector<int>& nums)
+{
+    int size = nums.size();
+    if (size == 0)
+        return 0;
+    int res = 1;
+    int val = nums[0];
+    for (int i = 1; i < size; ++i) {
+        if (val != nums[i]) {
+            val = nums[i];
+            nums[res] = val;
+            res++;
+        }
+    }
+    return res;
+}
+
+//27. Remove Element
+int removeElement(vector<int>& nums, int val)
+{
+    int res = 0;
+    for (int i = 0; i < nums.size(); ++i) {
+        if (nums[i] != val) {
+            nums[res] = nums[i];
+            res++;
+        }
+    }
+    return res;
+}
+
+//28. Implement strStr()
+int strStr(string haystack, string needle)
+{
+    if (needle.size() == 0)
+        return 0;
+
+    int i = 0, j = 0;
+    while (i < haystack.size() && j < needle.size()) {
+        if (haystack[i] == needle[j]) {
+            i++;
+            j++;
+        } else {
+            i -= j;
+            j = 0;
+            i++;
+        }
+    }
+
+    return (j == needle.size() ? i - j : -1);
+}
+
+//29. Divide Two Integers
+int divide(int dividend, int divisor)
+{
+    if (!divisor || (dividend == INT_MIN && divisor == -1))
+        return INT_MAX;
+
+    int res = 0;
+    int sign = ((dividend < 0) ^ (divisor < 0)) ? -1 : 1;
+    long long a = labs(dividend);
+    long long b = labs(divisor);
+    while (a >= b) {
+        long long tmp = b, multiple = 1;
+        while (a >= (tmp << 1)) {
+            tmp <<= 1;
+            multiple <<= 1;
+        }
+        a -= tmp;
+        res += multiple;
+    }
+
+    return sign == 1 ? res : -res;
+}
+
+//30. Substring with Concatenation of All Words
+vector<int> findSubstring(string s, vector<string>& words)
+{
+    vector<int> res;
+    int n = s.size();
+    int size = words.size();
+    if (n == 0 || size == 0)
+        return res;
+
+    unordered_map<string, int> dict;
+    for (auto word : words) {
+        dict[word]++;
+    }
+
+    int wl = words[0].size();
+    for (int i = 0; i < wl; ++i) {
+        int left = i, count = 0;
+        unordered_map<string, int> tmp;
+        for (int j = i; j <= n - wl; j += wl) {
+            string str = s.substr(j, wl);
+            if (dict.count(str)) {
+                tmp[str]++;
+                if (tmp[str] <= dict[str]) {
+                    count++;
+                } else {
+                    while (tmp[str] > dict[str]) {
+                        string str1 = s.substr(left, wl);
+                        tmp[str1]--;
+                        if (tmp[str1] < dict[str1])
+                            count--;
+                        left += wl;
+                    }
+                }
+
+                if (count == size) {
+                    res.push_back(left);
+                    tmp[s.substr(left, wl)]--;
+                    count--;
+                    left += wl;
+                }
+            } else {
+                tmp.clear();
+                count = 0;
+                left = j + wl;
+            }
+        }
+    }
+
+    return res;
+}
+
+//31. Next Permutation
+void nextPermutation(vector<int>& nums)
+{
+
+}
 #endif // LEETCODE50
 
