@@ -881,7 +881,88 @@ vector<int> findSubstring(string s, vector<string>& words)
 //31. Next Permutation
 void nextPermutation(vector<int>& nums)
 {
+    bool exchange = false;
+    for (int i = nums.size() - 1; i > 0; --i) {
+        if (nums[i] > nums[i - 1]) {
+            int j = nums.size() - 1;
+            while (j > i) {
+                if (nums[j] > nums[i - 1]) {
+                    break;
+                }
+                j--;
+            }
+            swap(nums[j], nums[i - 1]);
+            sort(nums.begin() + i, nums.end());
+            exchange = true;
+            break;
+        }
+    }
+    if (!exchange)
+        sort(nums.begin(), nums.end());
+}
 
+//32. Longest Valid Parentheses
+int longestValidParentheses(string s)
+{
+    int res = 0;
+    int size = s.size();
+    stack<int> st;
+    for (int i = 0; i < size; ++i) {
+        if (s[i] == '(')
+            st.push(i);
+        else {
+            if (st.empty()) {
+                st.push(i);
+            } else {
+                if (s[st.top()] == '(')
+                    st.pop();
+                else
+                    st.push(i);
+            }
+        }
+    }
+
+    if (st.empty()) {
+        res = size;
+    } else {
+        int a = size, b = 0;
+        while (!st.empty()) {
+            b = st.top();
+            st.pop();
+            res = max(res, a - b - 1);
+            a = b;
+        }
+        res = max(res, a);
+    }
+    return res;
+}
+
+//33. Search in Rotated Sorted Array
+int search(vector<int>& nums, int target)
+{
+    int lo = 0, hi = nums.size() - 1;
+    while (lo < hi) {
+        int mid = (lo + hi) / 2;
+        if (nums[mid] > nums[hi])
+            lo = mid + 1;
+        else
+            hi = mid;
+    }
+
+    int rot = lo;
+    lo = 0;
+    hi = nums.size() - 1;
+    while (lo <= hi) {
+        int mid = (lo + hi) / 2;
+        int realmid = (mid + rot) % nums.size();
+        if (nums[realmid] == target)
+            return realmid;
+        if (nums[realmid] < target)
+            lo = mid + 1;
+        else
+            hi = mid - 1;
+    }
+    return -1;
 }
 #endif // LEETCODE50
 
