@@ -964,5 +964,273 @@ int search(vector<int>& nums, int target)
     }
     return -1;
 }
+
+//34. Search for a Range
+vector<int> searchRange(vector<int>& nums, int target)
+{
+    vector<int> res(2, -1);
+    if (nums.size() == 0)
+        return res;
+
+    int l = 0, h = nums.size() - 1;
+    while (l < h) {
+        int mid = (l + h) / 2;
+        if (target > nums[mid]) {
+            l = mid + 1;
+        } else {
+            h = mid;
+        }
+    }
+    if (nums[l] != target)
+        return res;
+    else
+        res[0] = l;
+
+    h = nums.size() - 1;
+    while (l < h) {
+        int mid = (l + h) / 2 + 1;
+        if (nums[mid] > target) {
+            h = mid - 1;
+        } else {
+            l = mid;
+        }
+    }
+    res[1] = h;
+    return res;
+}
+
+//35. Search Insert Position
+int searchInsert(vector<int>& nums, int target)
+{
+    for (int i = 0; i < nums.size(); ++i) {
+        if (target <= nums[i]) {
+            return i;
+        }
+    }
+    return nums.size();
+}
+
+//36. Valid Sudoku
+bool isValidSudoku(vector<vector<char>>& board)
+{
+    for (int i = 0; i < 9; ++i) {
+        unordered_set<char> row;
+        unordered_set<char> col;
+        unordered_set<char> box;
+        for (int j = 0; j < 9; ++j) {
+            char val = board[i][j];
+            if (row.count(val))
+                return false;
+            else if (val != '.')
+                row.insert(val);
+
+            val = board[j][i];
+            if (col.count(val))
+                return false;
+            else if (val != '.')
+                col.insert(val);
+
+            val = board[i / 3 * 3 + j / 3][i % 3 * 3 + j % 3];
+            if (box.count(val))
+                return false;
+            else if (val != '.')
+                box.insert(val);
+        }
+    }
+    return true;
+}
+
+//37. Sudoku Solver
+bool isSudokuValid(vector<vector<char>> &board, int row, int col, char c)
+{
+    for (int i = 0; i < 9; ++i) {
+        if (board[i][col] != '.' && board[i][col] == c)
+            return false;
+        if (board[row][i] != '.' && board[row][i] == c)
+            return false;
+        if (board[row / 3 * 3 + i / 3][col / 3 * 3 + i % 3] != '.' && board[row / 3 * 3 + i / 3][col / 3 * 3 + i % 3] == c)
+            return false;
+    }
+    return true;
+}
+
+bool solve(vector<vector<char>> &board)
+{
+    for (int i = 0; i < board.size(); ++i) {
+        for (int j = 0; j < board[0].size(); ++j) {
+            if (board[i][j] == '.') {
+                for (char c = '1'; c <= '9'; ++c) {
+                    if (isSudokuValid(board, i, j, c)) {
+                        board[i][j] = c;
+                        if (solve(board)) {
+                            return true;
+                        } else {
+                            board[i][j] = '.';
+                        }
+                    }
+                }
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+void solveSudoku(vector<vector<char>>& board)
+{
+    if (board.size() == 0)
+        return;
+    solve(board);
+}
+
+//38. Count and Say
+string countAndSay(int n)
+{
+    return "";
+}
+
+//39. Combination Sum
+void combinationSum(vector<vector<int>> &res, vector<int> v, vector<int> &candidates, int target, int start)
+{
+    if (target == 0) {
+        res.push_back(v);
+    } else if (target < 0)
+        return;
+    else {
+        for (int i = start; i < candidates.size(); ++i) {
+            v.push_back(candidates[i]);
+            combinationSum(res, v, candidates, target - candidates[i], i);
+            v.pop_back();
+        }
+    }
+}
+
+vector<vector<int>> combinationSum(vector<int>& candidates, int target)
+{
+    vector<vector<int>> res;
+    sort(candidates.begin(), candidates.end());
+    combinationSum(res, vector<int>(), candidates, target, 0);
+    return res;
+}
+
+//40. Combination Sum II
+void combinationSum2(vector<vector<int>> &res, vector<int> v, vector<int> &candidates, int target, int start)
+{
+    if (target == 0) {
+        res.push_back(v);
+    } else if (target < 0)
+        return;
+    else {
+        for (int i = start; i < candidates.size(); ++i) {
+            if (i > start && v[i] == v[i - 1])
+                continue;
+            v.push_back(candidates[i]);
+            combinationSum2(res, v, candidates, target - candidates[i], i + 1);
+            v.pop_back();
+        }
+    }
+}
+
+vector<vector<int>> combinationSum2(vector<int>& candidates, int target)
+{
+    vector<vector<int>> res;
+    sort(candidates.begin(), candidates.end());
+    combinationSum(res, vector<int>(), candidates, target, 0);
+    return res;
+}
+
+//41. First Missing Positive
+int firstMissingPositive(vector<int>& nums)
+{
+#if 1
+    int n = nums.size();
+    for (int i = 0; i < n; ++i) {
+        while (nums[i] > 0 && nums[i] < n && nums[nums[i] - 1] != nums[i]) {
+            swap(nums[nums[i] - 1], nums[i]);
+        }
+    }
+    for (int i = 0; i < n; ++i) {
+        if (nums[i] != i + 1)
+            return i + 1;
+    }
+    return n + 1;
+#else
+    if (nums.size() == 0)
+        return 1;
+    if (nums.size() == 1)
+        return nums[0] != 1 ? 1 : 2;
+
+    sort(nums.begin(), nums.end());
+
+    int i = 0;
+    for (; i < nums.size(); ++i) {
+        if (nums[i] > 0) {
+            if (nums[i] > 1)
+                return 1;
+            else
+                break;
+        }
+    }
+
+    for (; i < nums.size() - 1; ++i) {
+        if (nums[i] != nums[i + 1] && nums[i] != nums[i + 1] - 1)
+            return nums[i] + 1;
+    }
+    return nums[nums.size() - 1] + 1;
+#endif
+}
+
+//42. Trapping Rain Water
+int trap(vector<int>& height)
+{
+    int res = 0;
+    int left = 0, right = height.size() - 1;
+    int maxLeft = 0, maxRight = 0;
+
+    while (left <= right) {
+        if (height[left] <= height[right]) {
+            if (height[left] >= maxLeft) {
+                maxLeft = height[left];
+            } else {
+                res += maxLeft - height[left];
+            }
+            left++;
+        } else {
+            if (height[right] >= maxRight) {
+                maxRight = height[right];
+            } else {
+                res += maxRight - height[right];
+            }
+            right--;
+        }
+    }
+    return res;
+}
+
+//43. Multiply Strings
+string multiply(string num1, string num2)
+{
+    int m = num1.size(), n = num2.size();
+    vector<int> v(m + n, 0);
+
+    for (int i = m - 1; i >= 0; --i) {
+        for (int j = n - 1; j >= 0; --j) {
+            int s = num1[i] - '0';
+            int t = num2[j] - '0';
+            int mul = s * t;
+            int p1 = i + j, p2 = i + j + 1;
+            int sum = mul + v[p2];
+
+            v[p1] += sum / 10;
+            v[p2] = sum % 10;
+        }
+    }
+    string res = "";
+    for (auto i : v) {
+        if (!(res.empty() && i == 0))
+            res += i + '0';
+    }
+    return res.empty() ? "0" : res;
+}
 #endif // LEETCODE50
 

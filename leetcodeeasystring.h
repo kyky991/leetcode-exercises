@@ -81,13 +81,13 @@ int strStr(string haystack, string needle)
     return j == needle.size() ? i - j : -1;
 }
 */
-
+/*
 //38. Count and Say
 string countAndSay(int n)
 {
     return "";
 }
-
+*/
 //58. Length of Last Word
 int lengthOfLastWord(string s)
 {
