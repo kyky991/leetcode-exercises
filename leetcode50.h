@@ -1135,7 +1135,7 @@ vector<vector<int>> combinationSum2(vector<int>& candidates, int target)
 {
     vector<vector<int>> res;
     sort(candidates.begin(), candidates.end());
-    combinationSum(res, vector<int>(), candidates, target, 0);
+    combinationSum2(res, vector<int>(), candidates, target, 0);
     return res;
 }
 
@@ -1232,5 +1232,110 @@ string multiply(string num1, string num2)
     }
     return res.empty() ? "0" : res;
 }
+
+//44. Wildcard Matching
+bool isMatch2(string s, string p)
+{
+    int m = s.size();
+    int n = p.size();
+
+    vector<vector<bool>> match(m + 1, vector<bool>(n + 1, false));
+    match[m][n] = true;
+
+    for (int i = n - 1; i >= 0; --i) {
+        if (p[i] != '*') {
+            break;
+        } else {
+            match[m][i] = true;
+        }
+    }
+
+    for (int i = m - 1; i >= 0; ++i) {
+        for (int j = n - 1; j >= 0; ++j) {
+            if (s[i] == p[j] || p[j] == '?') {
+                match[i][j] = match[i + 1][j + 1];
+            } else if (p[j] == '*') {
+                match[i][j] = match[i + 1][j] || match[i][j + 1];
+            } else {
+                match[i][j] = false;
+            }
+        }
+    }
+
+    return match[0][0];
+}
+
+//45. Jump Game II
+int jump(vector<int>& nums)
+{
+    int n = nums.size();
+    if (n < 2)
+        return 0;
+
+    int level = 0, curMax = 0, nextMax = 0, i = 0;
+    while (curMax - i + 1 > 0) {
+        level++;
+        for (; i <= curMax; ++i) {
+            nextMax = max(nextMax, nums[i] + i);
+            if (nextMax >= n - 1)
+                return level;
+        }
+        curMax = nextMax;
+    }
+
+    return 0;
+}
+
+//46. Permutations
+void permute(vector<vector<int>> &v, vector<int> tmp, vector<int> &nums)
+{
+    if (tmp.size() == nums.size()) {
+        v.push_back(tmp);
+    } else {
+        for (int i = 0; i < nums.size(); ++i) {
+            if (find(tmp.begin(), tmp.end(), nums[i]) != tmp.end()) {
+                continue;
+            }
+            tmp.push_back(nums[i]);
+            permute(v, tmp, nums);
+            tmp.pop_back();
+        }
+    }
+}
+
+vector<vector<int>> permute(vector<int>& nums)
+{
+    vector<vector<int>> res;
+    permute(res, vector<int>(), nums);
+    return res;
+}
+
+//47. Permutations II
+void permuteUnique(vector<vector<int>> &v, vector<bool> &used, vector<int> tmp, vector<int>& nums)
+{
+    if (tmp.size() == nums.size()) {
+        v.push_back(tmp);
+    } else {
+        for (int i = 0; i < nums.size(); ++i) {
+            if (used[i] || i > 0 && nums[i] == nums[i - 1] && !used[i - 1])
+                continue;
+            used[i] = true;
+            tmp.push_back(nums[i]);
+            permuteUnique(v, used, tmp, nums);
+            used[i]  = false;
+            tmp.pop_back();
+        }
+    }
+}
+
+vector<vector<int>> permuteUnique(vector<int>& nums)
+{
+    vector<vector<int>> res;
+    vector<bool> used(nums.size(), false);
+    sort(nums.begin(), nums.end());
+    permuteUnique(res, used, vector<int>(), nums);
+    return res;
+}
+
 #endif // LEETCODE50
 
