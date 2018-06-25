@@ -1,6 +1,7 @@
 #ifndef COMMON
 #define COMMON
 
+#include <map>
 #include <vector>
 #include <unordered_set>
 #include <unordered_map>

@@ -1337,5 +1337,62 @@ vector<vector<int>> permuteUnique(vector<int>& nums)
     return res;
 }
 
+//48. Rotate Image
+void rotate(vector<vector<int>>& matrix)
+{
+#if 1
+    reverse(matrix.begin(), matrix.end());
+    for (int i = 0; i < matrix.size(); ++i) {
+        for (int j = i + 1; j < matrix[i].size(); ++j) {
+            swap(matrix[i][j], matrix[j][i]);
+        }
+    }
+#else
+    int n = matrix.size();
+    for (int i = 0; i < n / 2; ++i) {
+        for (int j = i; j < n - 1 - i; ++j) {
+            int tmp = matrix[i][j];
+            matrix[i][j] = matrix[n - 1 - j][i];
+            matrix[n - 1 - j][i] = matrix[n - 1 - i][n - 1 - j];
+            matrix[n - 1 - i][n - 1 - j] = matrix[j][n - 1 - i];
+            matrix[j][n - 1 - i] = tmp;
+        }
+    }
+#endif
+}
+
+//49. Group Anagrams
+vector<vector<string>> groupAnagrams(vector<string>& strs)
+{
+    unordered_map<string, multiset<string>> m;
+    for (auto str : strs) {
+        string t = str;
+        sort(t.begin(), t.end());
+        m[t].insert(s);
+    }
+
+    vector<vector<string>> res;
+    for (auto s : m) {
+        res.push_back(vector<string>(s.second.begin(), s.second.end()));
+    }
+    return res;
+}
+
+//50. Pow(x, n)
+double myPow(double x, int n)
+{
+    if (n == 0)
+        return 1;
+
+    unsigned long long p;
+    if (n < 0) {
+        p = -n;
+        x = 1 / x;
+    } else {
+        p = n;
+    }
+
+    return (p % 2 == 0) ? pow(x * x, p / 2) : x * pow(x * x, p / 2);
+}
 #endif // LEETCODE50
 

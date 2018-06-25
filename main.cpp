@@ -45,5 +45,8 @@ int main(int argc, char *argv[])
 
     multiply("2", "0");
 
+    vector<string> vv = {"eat","tea","tan","ate","nat","bat"};
+    groupAnagrams(vv);
+
     return 0;
 }
