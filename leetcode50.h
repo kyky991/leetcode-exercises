@@ -1368,7 +1368,7 @@ vector<vector<string>> groupAnagrams(vector<string>& strs)
     for (auto str : strs) {
         string t = str;
         sort(t.begin(), t.end());
-        m[t].insert(s);
+        m[t].insert(str);
     }
 
     vector<vector<string>> res;
