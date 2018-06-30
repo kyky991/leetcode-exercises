@@ -196,5 +196,207 @@ string getPermutation(int n, int k)
     return res;
 }
 
+//61. Rotate List
+ListNode* rotateRight(ListNode* head, int k)
+{
+#if 1
+    if (!head)
+        return head;
+
+    int len = 1;
+    ListNode *newH, *tail;
+    newH = tail = head;
+
+    while (tail->next) {
+        tail = tail->next;
+        len++;
+    }
+    tail->next = head;
+
+    if (k %= len) {
+        for (int i = 0; i < len - k; ++i) {
+            tail = tail->next;
+        }
+    }
+    newH = tail->next;
+    tail->next = NULL;
+    return newH;
+#else
+    int n = 0;
+    ListNode *tmp = head;
+    ListNode *last = NULL;
+    while (tmp) {
+        n++;
+        if (tmp->next == NULL)
+            last = tmp;
+        tmp = tmp->next;
+    }
+
+    if (n == 0)
+        return NULL;
+
+    ListNode *mid = NULL;
+
+    k %= n;
+    k = n - k;
+    tmp = head;
+    while (k && tmp) {
+        if (k == 1)
+            mid = tmp;
+        tmp = tmp->next;
+        k--;
+    }
+    mid->next = NULL;
+
+    if (tmp) {
+        last->next = head;
+        head = tmp;
+    }
+
+    return head;
+#endif
+}
+
+//62. Unique Paths
+int uniquePaths(int m, int n)
+{
+#if 1
+    vector<int> res(m, 1);
+    for (int i = 1; i < n; ++i) {
+        for (int j = 1; j < m; ++j) {
+            res[j] += res[j - 1];
+        }
+    }
+    return res[m - 1];
+#else
+    vector<vector<int>> res(m, vector<int>(n, 1));
+    for (int i = 1; i < m; ++i) {
+        for (int j = 1; j < n; ++j) {
+            res[i][j] = res[i - 1][j] + res[i][j - 1];
+        }
+    }
+    return res[m - 1][n - 1];
+#endif
+}
+
+//63. Unique Paths II
+int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid)
+{
+    int m = obstacleGrid.size();
+    int n = obstacleGrid[0].size();
+    vector<int> res(m, 0);
+    res[0] = 1;
+    for (int i = 1; i < n; ++i) {
+        for (int j = 1; j < m; ++j) {
+            if (obstacleGrid[i][j])
+                res[j] = 0;
+            else
+                res[j] += res[j - 1];
+        }
+    }
+    return res[m - 1];
+}
+
+//64. Minimum Path Sum
+int minPathSum(vector<vector<int>>& grid)
+{
+    int m = grid.size();
+    int n = grid[0].size();
+    vector<vector<int>> dp(m, vector<int>(n, 0));
+    dp[0] = grid[0];
+    for (int i = 1; i < n; ++i) {
+        dp[0][i] = grid[0][i] + dp[0][i - 1];
+    }
+    for (int j = 1; j < m; ++j) {
+        dp[j][0] = grid[j][0] + dp[j - 1][0];
+    }
+    for (int i = 1; i < m; ++i) {
+        for (int j = 1; j < n; ++j) {
+            dp[i][j] = grid[i][j] + min(dp[i - 1][j], dp[i][j - 1]);
+        }
+    }
+    return dp[m - 1][n - 1];
+}
+
+//65. Valid Number
+bool isNumber(string s)
+{
+    if (!s.empty()) {
+        s.erase(0, s.find_first_not_of(" "));
+        s.erase(s.find_last_not_of(" ") + 1);
+    }
+
+    bool pointSeen = false;
+    bool eSeen = false;
+    bool numberSeen = false;
+    bool numberAfterE = true;
+    for(int i = 0; i < s.length(); i++) {
+        if('0' <= s[i] && s[i] <= '9') {
+            numberSeen = true;
+            numberAfterE = true;
+        } else if(s[i] == '.') {
+            if(eSeen || pointSeen) {
+                return false;
+            }
+            pointSeen = true;
+        } else if(s[i] == 'e') {
+            if(eSeen || !numberSeen) {
+                return false;
+            }
+            numberAfterE = false;
+            eSeen = true;
+        } else if(s[i] == '-' || s[i] == '+') {
+            if(i != 0 && s[i - 1] != 'e') {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    return numberSeen && numberAfterE;
+}
+
+//66. Plus One
+vector<int> plusOne(vector<int>& digits)
+{
+    int n = digits.size();
+    for (int i = n - 1; i >= 0; --i) {
+        if (digits[i] < 9) {
+            digits[i]++;
+            return digits;
+        }
+        digits[i] = 0;
+    }
+    digits[0] = 1;
+    digits.push_back(0);
+    return digits;
+}
+
+//67. Add Binary
+string addBinary(string a, string b)
+{
+    string res = "";
+
+    int i = a.size() - 1, j = b.size() - 1;
+    int c = 0;
+
+    while (i >= 0 || j >= 0 || c > 0) {
+        c += (i >= 0 ? a[i--] - '0' : 0);
+        c += (j >= 0 ? b[j--] - '0' : 0);
+        res = char(c % 2 + '0') + res;
+        c /= 2;
+    }
+
+    return res;
+}
+
+//68. Text Justification
+vector<string> fullJustify(vector<string>& words, int maxWidth)
+{
+
+}
+
+
 #endif // LEETCODE100_H
 
