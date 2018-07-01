@@ -88,6 +88,7 @@ string countAndSay(int n)
     return "";
 }
 */
+/*
 //58. Length of Last Word
 int lengthOfLastWord(string s)
 {
@@ -100,7 +101,7 @@ int lengthOfLastWord(string s)
     }
     return result;
 }
-
+*/
 
 //125. Valid Palindrome
 bool isPalindrome(string s)

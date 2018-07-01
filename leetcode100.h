@@ -6,7 +6,7 @@
 //51. N-Queens
 vector<vector<string>> solveNQueens(int n)
 {
-
+    return vector<vector<string>>();
 }
 
 //53. Maximum Subarray
@@ -62,8 +62,8 @@ bool canJump(vector<int>& nums)
 {
     int n = nums.size();
 #if 1
-    int reach = 0;
-    for (int i = 0; i < n && i <= reach; ++i) {
+    int reach = 0, i = 0;
+    for (; i < n && i <= reach; ++i) {
         reach = max(reach, nums[i] + i);
     }
     return i == n;
@@ -394,9 +394,123 @@ string addBinary(string a, string b)
 //68. Text Justification
 vector<string> fullJustify(vector<string>& words, int maxWidth)
 {
-
+    vector<string> res;
+    for (int i = 0, k, l; i < words.size(); i += k) {
+        for (k = l = 0; i + k < words.size() && l + words[i + k].size() <= maxWidth - k; ++k) {
+            l += words[i + k].size();
+        }
+        string tmp = words[i];
+        for (int j = 0; j < k - 1; ++j) {
+            if (i + k >= words.size())
+                tmp += " ";
+            else
+                tmp += string((maxWidth - l) / (k - 1) + (j < (maxWidth - l) % (k - 1)), ' ');
+            tmp += words[i + j + 1];
+        }
+        tmp += string(maxWidth - tmp.size(), ' ');
+        res.push_back(tmp);
+    }
+    return res;
 }
 
+//69. Sqrt(x)
+int mySqrt(int x)
+{
+    if (x <= 0)
+        return 0;
 
+    int left = 1, right = x;
+    int mid = left + (right - left) / 2;
+
+    while (left <= right) {
+        if (mid == x / mid) {
+            return mid;
+        } else {
+            if (mid > x / mid) {
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
+            mid = left + (right - left) / 2;
+        }
+    }
+
+    return right;
+}
+
+//70. Climbing Stairs
+int climbStairs(int n)
+{
+    if (n < 0)
+        return 0;
+    if (n == 1)
+        return 1;
+    if (n == 2)
+        return 2;
+
+    int a = 2;//[n - 1]
+    int b = 1;//[n - 2]
+    int res = 0;//[n]
+
+    for (int i = 2; i < n; ++i) {
+        res = a + b;
+        b = a;
+        a = res;
+    }
+
+    return res;
+}
+
+//71. Simplify Path
+string simplifyPath(string path)
+{
+    stack<string> s;
+    string tmp;
+    stringstream ss(path);
+    while (getline(ss, tmp, '/')) {
+        if (tmp.empty()) {
+
+        } else if (tmp == ".") {
+
+        } else if (tmp == "..") {
+            if (!s.empty())
+                s.pop();
+        } else {
+            s.push(tmp);
+        }
+    }
+
+    string res;
+    while (!s.empty()) {
+        res = "/" + s.top() + res;
+        s.pop();
+    }
+    return res.empty() ? "/" : res;
+}
+
+//72. Edit Distance
+int minDistance(string word1, string word2)
+{
+    int m = word1.size();
+    int n = word2.size();
+
+    vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0));
+    for (int i = 1; i <= m; ++i) {
+        dp[i][0] = i;
+    }
+    for (int j = 1; j <= n; ++j) {
+        dp[0][j] = 0;
+    }
+    for (int i = 1; i <= m; ++i) {
+        for (int j = 1; j <= n; ++j) {
+            if (word1[i - 1] == word2[j - 1]) {
+                dp[i][j] = dp[i - 1][j - 1];
+            } else {
+                dp[i][j] = min(dp[i - 1][j - 1] + 1, min(dp[i - 1][j] + 1, dp[i][j - 1] + 1));
+            }
+        }
+    }
+    return dp[m][n];
+}
 #endif // LEETCODE100_H
 
