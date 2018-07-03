@@ -4,6 +4,7 @@
 #include "leetcodeeasystring.h"
 #include "leetcodebitmanipulation.h"
 #include "leetcode50.h"
+#include "leetcode100.h"
 
 int main(int argc, char *argv[])
 {
@@ -32,7 +33,6 @@ int main(int argc, char *argv[])
 
     vector<string> res = generateParenthesis(3);
 
-    int j = (int)-2147483648 / (int)-1;
     int k = -2147483648;
     int m = -1;
     std::cout << (k & 0x80000000) << std::endl;
@@ -47,6 +47,8 @@ int main(int argc, char *argv[])
 
     vector<string> vv = {"eat","tea","tan","ate","nat","bat"};
     groupAnagrams(vv);
+
+    simplifyPath("/abc/...");
 
     return 0;
 }

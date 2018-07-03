@@ -499,7 +499,7 @@ int minDistance(string word1, string word2)
         dp[i][0] = i;
     }
     for (int j = 1; j <= n; ++j) {
-        dp[0][j] = 0;
+        dp[0][j] = j;
     }
     for (int i = 1; i <= m; ++i) {
         for (int j = 1; j <= n; ++j) {
@@ -512,5 +512,33 @@ int minDistance(string word1, string word2)
     }
     return dp[m][n];
 }
+
+//73. Set Matrix Zeroes
+void setZeroes(vector<vector<int>>& matrix)
+{
+    unordered_set<int> rows;
+    unordered_set<int> cols;
+    int m = matrix.size();
+    int n = matrix[0].size();
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            if (matrix[i][j] == 0) {
+                rows.insert(i);
+                cols.insert(j);
+            }
+        }
+    }
+    for (auto r : rows) {
+        for (int i = 0; i < n; ++i) {
+            matrix[r][i] = 0;
+        }
+    }
+    for (auto c : cols) {
+        for (int i = 0; i < m; ++i) {
+            matrix[i][c] = 0;
+        }
+    }
+}
+
 #endif // LEETCODE100_H
 
