@@ -540,5 +540,197 @@ void setZeroes(vector<vector<int>>& matrix)
     }
 }
 
+//74. Search a 2D Matrix
+bool searchMatrix(vector<vector<int>>& matrix, int target)
+{
+    int m = matrix.size();
+    if (m == 0)
+        return false;
+
+    int n = matrix[0].size();
+
+    int start = 0, end = m * n - 1;
+    while (start <= end) {
+        int mid = (start + end) / 2;
+        int value = matrix[mid / n][mid % n];
+        if (target < value) {
+            end = mid - 1;
+        } else if (target > value) {
+            start = mid + 1;
+        } else {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+//75. Sort Colors
+void sortColors(vector<int>& nums)
+{
+    int n = nums.size();
+#if 1
+    int second = n - 1, zero = 0;
+    for (int i = 0; i <= second; ++i) {
+        while (nums[i] == 2 && i < second) {
+            swap(nums[i], nums[second--]);
+        }
+        while (nums[i] == 0 && i > zero) {
+            swap(nums[i], nums[zero++]);
+        }
+    }
+#else
+    for (int i = 0; i < n; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            if (nums[i] >= nums[j]) {
+                swap(nums[i], nums[j]);
+            }
+        }
+    }
+#endif
+}
+
+//76. Minimum Window Substring
+string minWindow(string s, string t)
+{
+    vector<int> map(128, 0);
+    for (auto c : t)
+        map[c]++;
+    int count = t.size(), begin = 0, end = 0, d = INT_MAX, head = 0;
+    while (end < s.size()) {
+        if (map[s[end++]]-- > 0) {
+            count--;
+        }
+        while (count == 0) {
+            if (end - begin < d) {
+                head = begin;
+                d = end - head;
+            }
+            if (map[s[begin++]]++ == 0) {
+                count++;
+            }
+        }
+    }
+    return d == INT_MAX ? "" : s.substr(head, d);
+}
+
+//77. Combinations
+void combine(vector<vector<int>> &vv, vector<int> v, int index, int n, int k)
+{
+    if (v.size() == k) {
+        vv.push_back(v);
+    } else {
+        for (int i = index; i <= n; ++i) {
+            v.push_back(i);
+            combine(vv, v, i + 1, n, k);
+            v.pop_back();
+        }
+    }
+}
+
+vector<vector<int>> combine(int n, int k)
+{
+    vector<vector<int>> res;
+    combine(res, vector<int>(), 1, n, k);
+    return res;
+}
+
+//78. Subsets
+void subsets(vector<vector<int>> &vv, vector<int> v, int index, vector<int> &nums, int k)
+{
+    if (v.size() == k) {
+        vv.push_back(v);
+    } else {
+        for (int i = index; i < nums.size(); ++i) {
+            v.push_back(nums[i]);
+            subsets(vv, v, i + 1, nums, k);
+            v.pop_back();
+        }
+    }
+}
+
+vector<vector<int>> subsets(vector<int>& nums)
+{
+    int n = nums.size();
+    vector<vector<int>> res;
+    for (int i = 0; i <= n; ++i) {
+        subsets(res, vector<int>(), 0, nums, i);
+    }
+    return res;
+}
+
+//79. Word Search
+bool exist(vector<vector<char>> &board, vector<vector<int>> &dfs, int i, int j, string word)
+{
+    if (word.empty())
+        return true;
+
+    if (i < 0 || i >= board.size() || j < 0 || j >= board[0].size()) {
+        return false;
+    }
+
+    if (dfs[i][j] == 1)
+        return false;
+
+    if (board[i][j] == word[0]) {
+        dfs[i][j] = 1;
+        bool flag =  exist(board, dfs, i - 1, j, word.substr(1))
+                || exist(board, dfs, i + 1, j, word.substr(1))
+                || exist(board, dfs, i, j - 1, word.substr(1))
+                || exist(board, dfs, i, j + 1, word.substr(1));
+        dfs[i][j] = 0;
+        return flag;
+    }
+    return false;
+}
+
+bool exist(vector<vector<char>>& board, string word)
+{
+    int m = board.size();
+    if (m == 0 || word.empty())
+        return word.empty();
+
+    int n = board[0].size();
+    vector<vector<int>> dfs(m, vector<int>(n, 0));
+
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            if (exist(board, dfs, i, j, word)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+//80. Remove Duplicates from Sorted Array II
+int removeDuplicates(vector<int>& nums)
+{
+    unordered_map<int, int> m;
+    int index = 0;
+    int i = 0;
+    while (i < nums.size()) {
+        m[nums[i]]++;
+        nums[index] = nums[i];
+        if (m[nums[i]] == 3) {
+            m[nums[i]]--;
+        } else {
+            index++;
+        }
+        i++;
+    }
+    return index;
+    for (int i = 0; i < nums.size(); ++i) {
+        if (m[nums[i]] == 0) {
+            m[nums[i]]++;
+        } else if (m[nums[i]] == 1) {
+            m[nums[i]]++;
+            index = i + 1;
+        } else {
+            nums[index] = nums
+        }
+    }
+}
+
 #endif // LEETCODE100_H
 

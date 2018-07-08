@@ -50,5 +50,8 @@ int main(int argc, char *argv[])
 
     simplifyPath("/abc/...");
 
+    vector<vector<int>> m1 = {{1,3,5,7},{10,11,16,20},{23,30,34,50}};
+    searchMatrix(m1, 3);
+
     return 0;
 }
