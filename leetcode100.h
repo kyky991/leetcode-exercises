@@ -720,17 +720,78 @@ int removeDuplicates(vector<int>& nums)
         i++;
     }
     return index;
-    for (int i = 0; i < nums.size(); ++i) {
-        if (m[nums[i]] == 0) {
-            m[nums[i]]++;
-        } else if (m[nums[i]] == 1) {
-            m[nums[i]]++;
-            index = i + 1;
+}
+
+//81. Search in Rotated Sorted Array II
+bool search(vector<int>& nums, int target)
+{
+    int l = 0, r = nums.size() - 1;
+    while (l <= r) {
+        int mid = (l + r) / 2;
+        if (nums[mid] == target)
+            return true;
+
+        if (nums[mid] == nums[l] && nums[mid] == nums[r]) {
+            l++;
+            r--;
+        } else if (nums[mid] < nums[l]) {
+            if (nums[mid] < target && target <= nums[r])
+                l = mid + 1;
+            else
+                r = mid - 1;
         } else {
-            nums[index] = nums
+            if (nums[mid] > target && target >= nums[l])
+                r = mid - 1;
+            else
+                l = mid + 1;
         }
     }
+
+    return false;
 }
+
+//82. Remove Duplicates from Sorted List II
+ListNode* deleteDuplicates(ListNode* head)
+{
+    if (head == NULL)
+        return NULL;
+
+    ListNode p(0);
+    p.next = head;
+    ListNode *pre = &p;
+
+    ListNode *tmp = head;
+    while (tmp) {
+        while (tmp->next && tmp->val == tmp->next->val) {
+            tmp = tmp->next;
+        }
+        if (pre->next == tmp) {
+            pre = pre->next;
+        } else {
+            pre->next = tmp->next;
+        }
+        tmp = tmp->next;
+    }
+    return p.next;
+}
+
+//83. Remove Duplicates from Sorted List
+ListNode* deleteDuplicates(ListNode* head)
+{
+    if (head == NULL)
+        return NULL;
+
+    ListNode *tmp = head;
+    while (tmp->next) {
+        if (tmp->val == tmp->next->val) {
+            tmp->next = tmp->next->next;
+        } else {
+            tmp = tmp->next;
+        }
+    }
+    return head;
+}
+
 
 #endif // LEETCODE100_H
 
