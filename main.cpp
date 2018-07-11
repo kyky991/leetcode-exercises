@@ -53,5 +53,10 @@ int main(int argc, char *argv[])
     vector<vector<int>> m1 = {{1,3,5,7},{10,11,16,20},{23,30,34,50}};
     searchMatrix(m1, 3);
 
+    v = { 2, 1, 5 , 6, 2, 3 };
+    largestRectangleArea(v);
+
+    isScramble("great", "rgeat");
+
     return 0;
 }

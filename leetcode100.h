@@ -704,7 +704,7 @@ bool exist(vector<vector<char>>& board, string word)
 }
 
 //80. Remove Duplicates from Sorted Array II
-int removeDuplicates(vector<int>& nums)
+int removeDuplicates2(vector<int>& nums)
 {
     unordered_map<int, int> m;
     int index = 0;
@@ -723,7 +723,7 @@ int removeDuplicates(vector<int>& nums)
 }
 
 //81. Search in Rotated Sorted Array II
-bool search(vector<int>& nums, int target)
+bool search2(vector<int>& nums, int target)
 {
     int l = 0, r = nums.size() - 1;
     while (l <= r) {
@@ -751,7 +751,7 @@ bool search(vector<int>& nums, int target)
 }
 
 //82. Remove Duplicates from Sorted List II
-ListNode* deleteDuplicates(ListNode* head)
+ListNode* deleteDuplicates2(ListNode* head)
 {
     if (head == NULL)
         return NULL;
@@ -776,7 +776,7 @@ ListNode* deleteDuplicates(ListNode* head)
 }
 
 //83. Remove Duplicates from Sorted List
-ListNode* deleteDuplicates(ListNode* head)
+ListNode* deleteDuplicates3(ListNode* head)
 {
     if (head == NULL)
         return NULL;
@@ -792,6 +792,160 @@ ListNode* deleteDuplicates(ListNode* head)
     return head;
 }
 
+//84. Largest Rectangle in Histogram
+int largestRectangleArea(vector<int>& heights)
+{
+    int res = 0;
+    heights.push_back(0);
+    vector<int> index;
 
+    for (int i = 0; i < heights.size(); ++i) {
+        while (index.size() > 0 && heights[index.back()] >= heights[i]) {
+            int h = heights[index.back()];
+            index.pop_back();
+
+            int idx = index.size() > 0 ? index.back() : -1;
+            if (h * (i - idx - 1) > res)
+                res = h * (i - idx - 1);
+        }
+        index.push_back(i);
+    }
+
+    return res;
+}
+
+//85. Maximal Rectangle
+int maximalRectangle(vector<vector<char>>& matrix)
+{
+    int m = matrix.size();
+    if (m == 0)
+        return 0;
+
+    int n = matrix[0].size();
+    vector<int> left(n, 0);
+    vector<int> right(n, n);
+    vector<int> height(n, 0);
+    int res = 0;
+    for (int i = 0; i < m; ++i) {
+        int curLeft = 0, curRight = n;
+        for (int j = 0; j < n; ++j) {
+            if (matrix[i][j] == '1')
+                height[j]++;
+            else
+                height[j] = 0;
+        }
+        for (int j = 0; j < n; ++j) {
+            if (matrix[i][j] == '1') {
+                left[j] = max(left[j], curLeft);
+            } else {
+                left[j] = 0;
+                curLeft = j + 1;
+            }
+        }
+        for (int j = n - 1; j >= 0; --j) {
+            if (matrix[i][j] == '1') {
+                right[j] = min(right[j], curRight);
+            } else {
+                right[j] = n;
+                curRight = j;
+            }
+        }
+        for (int j = 0; j < n; ++j) {
+            res = max(res, (right[j] - left[j]) * height[j]);
+        }
+    }
+    return res;
+}
+
+//86. Partition List
+ListNode* partition(ListNode* head, int x)
+{
+#if 1
+    ListNode node1(0), node2(0);
+    ListNode *p1 = &node1, *p2 = &node2;
+    while (head){
+        if (head->val < x) {
+            p1->next = head;
+            p1 = p1->next;
+        } else {
+            p2->next = head;
+            p2 = p2->next;
+        }
+        head = head->next;
+    }
+    p2->next = NULL;
+    p1->next = node2.next;
+    return node1.next;
+#else
+    ListNode *tmp = head;
+    if (tmp == NULL)
+        return NULL;
+
+    ListNode p(0);
+    p.next = head;
+
+    ListNode *pre = &p;
+
+    while (tmp) {
+        if (tmp->val >= x) {
+            break;
+        } else {
+            pre = pre->next;
+            tmp = tmp->next;
+        }
+    }
+
+    ListNode *second = tmp;
+    ListNode *sp = pre;
+    while (tmp) {
+        if (tmp->val >= x) {
+            sp = sp->next;
+            tmp = tmp->next;
+        } else {
+            sp->next = tmp->next;
+            pre->next = tmp;
+            pre = pre->next;
+            pre->next = NULL;
+            tmp = sp->next;
+        }
+    }
+    pre->next = second;
+    return p.next;
+#endif
+}
+
+//87. Scramble String
+bool isScramble(string s1, string s2)
+{
+    if (s1 == s2)
+        return true;
+
+    int n = s1.size();
+    int count[26] = { 0 };
+    for (int i = 0; i < n; ++i) {
+        count[s1[i] - 'a']++;
+        count[s2[i] - 'a']--;
+    }
+    for (int i = 0 ; i < 26; ++i) {
+        if (count[i] != 0)
+            return false;
+    }
+
+    for (int i = 1; i < n; ++i) {
+        if (isScramble(s1.substr(0, i), s2.substr(0, i)) && isScramble(s1.substr(i), s2.substr(i)))
+            return true;
+        if (isScramble(s1.substr(0, i), s2.substr(n - i)) && isScramble(s1.substr(i), s2.substr(0, n - i)))
+            return true;
+    }
+    return false;
+}
+
+//88. Merge Sorted Array
+void merge(vector<int>& nums1, int m, vector<int>& nums2, int n)
+{
+    int i = m - 1, j = n - 1, k = m + n - 1;
+    while (j >= 0) {
+        nums1[k--] = ((i >= 0 && nums1[i] > nums2[j]) ? nums1[i--] : nums2[j--]);
+    }
+}
 #endif // LEETCODE100_H
-
