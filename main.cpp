@@ -58,5 +58,7 @@ int main(int argc, char *argv[])
 
     isScramble("great", "rgeat");
 
+    numDecodings("122");
+
     return 0;
 }

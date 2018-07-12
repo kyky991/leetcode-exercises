@@ -948,4 +948,60 @@ void merge(vector<int>& nums1, int m, vector<int>& nums2, int n)
         nums1[k--] = ((i >= 0 && nums1[i] > nums2[j]) ? nums1[i--] : nums2[j--]);
     }
 }
+
+//89. Gray Code
+vector<int> grayCode(int n)
+{
+    vector<int> res;
+    for (int i = 0; i < (1 << n); ++i) {
+        res.push_back(i ^ (i >> 1));
+    }
+    return res;
+}
+
+//90. Subsets II
+void subsetsWithDup(vector<vector<int>> &vv, vector<int> &v, vector<int> &nums, int index)
+{
+    vv.push_back(v);
+    for (int i = index; i < nums.size(); ++i) {
+        if (i == index || nums[i] != nums[i - 1]) {
+            v.push_back(nums[i]);
+            subsetsWithDup(vv, v, nums, i + 1);
+            v.pop_back();
+        }
+    }
+}
+
+
+vector<vector<int>> subsetsWithDup(vector<int>& nums)
+{
+    sort(nums.begin(), nums.end());
+
+    vector<vector<int>> res;
+    vector<int> v;
+    subsetsWithDup(res, v, nums, 0);
+    return res;
+}
+
+//91. Decode Ways
+int numDecodings(string s)
+{
+    int n = s.size();
+    if (n == 0)
+        return 0;
+
+    vector<int> dp(n + 1, 0);
+    dp[n] = 1;
+    dp[n - 1] = s[n - 1] == '0' ? 0 : 1;
+
+    for (int i = n - 2; i >= 0; --i) {
+        if (s[i] == '0')
+            continue;
+        else
+            dp[i] = stoi(s.substr(i, 2)) <= 26 ? dp[i + 1] + dp[i + 2] : dp[i + 1];
+    }
+
+    return dp[0];
+}
+
 #endif // LEETCODE100_H
