@@ -1004,4 +1004,163 @@ int numDecodings(string s)
     return dp[0];
 }
 
+//92. Reverse Linked List II
+ListNode* reverseBetween(ListNode* head, int m, int n)
+{
+    ListNode p(0);
+    p.next = head;
+
+    ListNode *pre = &p;
+    ListNode *tmp = head;
+
+    int i = 1;
+    while (i++ < m) {
+        pre = tmp;
+        tmp = tmp->next;
+    }
+    while (i++ <= n) {
+        ListNode *n = pre->next;
+        pre->next = tmp->next;
+        tmp->next = tmp->next->next;
+        pre->next->next = n;
+    }
+    return p.next;
+}
+
+//93. Restore IP Addresses
+void restoreIpAddresses(vector<string> &v, string t, string s, int k)
+{
+    if (s.empty() && k == 1) {
+        v.push_back(t);
+    } else {
+        int i = 0;
+        for (int j = 1; j <= 3; ++j) {
+            if (i < s.size() - j) {
+                string tmp = s.substr(0, j);
+                if (tmp[0] && tmp.size() > 1)
+                    continue;
+
+                int num = stoi(tmp);
+                if (num >= 0 && num <= 255) {
+                    if (k == 4)
+                        t += '.';
+                    t += tmp;
+                    restoreIpAddresses(v, t, s.substr(j), k - 1);
+                }
+            }
+        }
+    }
+}
+
+vector<string> restoreIpAddresses(string s)
+{
+    vector<string> res;
+    if (s.size() <= 12)
+        restoreIpAddresses(res, "", s, 4);
+    return res;
+}
+
+//94. Binary Tree Inorder Traversal
+vector<int> inorderTraversal(TreeNode* root)
+{
+    vector<int> res;
+    stack<TreeNode *> s;
+    TreeNode *cur = root;
+
+    while (cur != NULL || !s.empty()) {
+        while (cur != NULL) {
+            s.push(cur);
+            cur = cur->left;
+        }
+        cur = s.top();
+        s.pop();
+        res.push_back(cur->val);
+        cur = cur->right;
+    }
+    return res;
+}
+
+//95. Unique Binary Search Trees II
+vector<TreeNode*> generateTrees(int n)
+{
+    vector<TreeNode *> res;
+
+    for (int i = 1; i <= n; ++i) {
+
+    }
+}
+
+
+//97. Interleaving String
+bool isInterleave(string s1, string s2, string s3)
+{
+
+}
+
+//98. Validate Binary Search Tree
+bool isRightLessThan(TreeNode *node, TreeNode *root)
+{
+    if (node == NULL)
+        return true;
+    if (node->right == NULL)
+        return true;
+    if (node->right->val >= root->val) {
+        return false;
+    }
+    return isRightLessThan(node->right->right, root);
+}
+
+bool isLeftGreaterThan(TreeNode *node, TreeNode *root)
+{
+    if (node == NULL)
+        return true;
+    if (node->left == NULL)
+        return true;
+    if (node->left->val >= root->val) {
+        return false;
+    }
+    return isLeftGreaterThan(node->left->left, root);
+}
+
+bool isValidBST(TreeNode* root)
+{
+#if 1
+    stack<TreeNode *> s;
+    TreeNode *cur = root;
+    TreeNode *pre = NULL;
+    while (cur != NULL && !s.empty()) {
+        while (cur != NULL) {
+            s.push(cur);
+            cur = cur->left;
+        }
+        cur = s.top();
+        s.pop();
+        if (pre != NULL && cur->val <= pre->val)
+            return false;
+        pre = cur;
+        cur = cur->right;
+    }
+    return true;
+#else
+    if (root == NULL)
+        return true;
+
+    if (root->left && root->left->val >= root->val) {
+        return false;
+    }
+    if (root->right && root->right->val <= root->val) {
+        return false;
+    }
+
+    return isRightLessThan(root->left, root) && isLeftGreaterThan(root->right, root) &&  isValidBST(root->left) && isValidBST(root->right);
+#endif
+}
+
+//99. Recover Binary Search Tree
+void recoverTree(TreeNode* root)
+{
+
+}
+
+
 #endif // LEETCODE100_H
