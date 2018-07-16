@@ -1081,21 +1081,74 @@ vector<int> inorderTraversal(TreeNode* root)
 }
 
 //95. Unique Binary Search Trees II
-vector<TreeNode*> generateTrees(int n)
+vector<TreeNode *> generateTrees(int start, int end)
 {
     vector<TreeNode *> res;
-
-    for (int i = 1; i <= n; ++i) {
-
+    if (start > end) {
+        res.push_back(0);
+    } else {
+        for (int i = start; i <= end; ++i) {
+            vector<TreeNode *> l = generateTrees(start, i - 1);
+            vector<TreeNode *> r = generateTrees(i + 1, end);
+            for (auto lt : l) {
+                for (auto rt : r) {
+                    TreeNode *root = new TreeNode(i);
+                    root->left = lt;
+                    root->right = rt;
+                    res.push_back(root);
+                }
+            }
+        }
     }
+    return res;
 }
 
+vector<TreeNode*> generateTrees(int n)
+{
+    if (n < 1)
+        return vector<TreeNode *>();
+    return generateTrees(1, n);
+}
+
+//96. Unique Binary Search Trees
+
+int numTrees(int n)
+{
+    vector<int> dp(n + 1, 0);
+    dp[0] = dp[1] = 1;
+
+    for (int i = 2; i <= n; ++i) {
+        for (int j = 1; j <= i; ++j) {
+            dp[i] += dp[j - 1] * dp[i - j];
+        }
+    }
+    return dp[n];
+}
 
 //97. Interleaving String
 bool isInterleave(string s1, string s2, string s3)
 {
+    int m = s1.size(), n = s2.size();
+    if (s3.size() != m + n)
+        return false;
 
+    vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0));
+
+    for (int i = 0; i <= m; ++i) {
+        for (int j = 0; j <= n; ++j) {
+            if (i == 0 && j == 0)
+                dp[i][j] = 1;
+            else if (i == 0)
+                dp[i][j] = (dp[i][j - 1] && s2[j - 1] == s3[i + j - 1]);
+            else if (j == 0)
+                dp[i][j] = (dp[i - 1][j] && s1[i - 1] == s3[i + j - 1]);
+            else
+                dp[i][j] = (dp[i - 1][j] && s1[i - 1] == s3[i + j - 1]) || (dp[i][j - 1] && s2[j - 1] == s3[i + j - 1]);
+        }
+    }
+    return dp[m][n];
 }
+
 
 //98. Validate Binary Search Tree
 bool isRightLessThan(TreeNode *node, TreeNode *root)
@@ -1157,10 +1210,38 @@ bool isValidBST(TreeNode* root)
 }
 
 //99. Recover Binary Search Tree
-void recoverTree(TreeNode* root)
-{
+TreeNode *first = NULL;
+TreeNode *second = NULL;
+TreeNode *pre = new TreeNode(INT_MIN);
 
+void recoverTreeRe(TreeNode *node)
+{
+    if (node == NULL)
+        return;
+    recoverTreeRe(node->left);
+    if (first == NULL && pre->val >= node->val)
+        first = pre;
+    if (first != NULL && pre->val >= node->val)
+        second = node;
+    pre = node;
+    recoverTreeRe(node->right);
 }
 
+void recoverTree(TreeNode* root)
+{
+    recoverTreeRe(root);
+    swap(first->val, second->val);
+}
+
+//100. Same Tree
+bool isSameTree(TreeNode* p, TreeNode* q)
+{
+    if (p == NULL && q == NULL)
+        return true;
+    if (p && q && p->val == q->val) {
+        return isSameTree(p->left, q->left) && isSameTree(p->right, q->right);
+    }
+    return false;
+}
 
 #endif // LEETCODE100_H
