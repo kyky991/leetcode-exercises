@@ -4,9 +4,72 @@
 #include "common.h"
 
 //51. N-Queens
+bool isQueenValid(vector<string> &v, int row, int col, int n)
+{
+    for (int i = 0; i < row; ++i) {
+        if (v[i][col] == 'Q')
+            return false;
+    }
+    for (int i = row - 1, j = col - 1; i >= 0 && j >= 0; --i, --j) {
+        if (v[i][j] == 'Q')
+            return false;
+    }
+    for (int i = row - 1, j = col + 1; i >= 0 && j < n; --i, ++j) {
+        if (v[i][j] == 'Q')
+            return false;
+    }
+    return true;
+}
+
+void solveNQueens(vector<vector<string>> &vv, vector<string> &v, int row, int n)
+{
+    if (row == n) {
+        vv.push_back(v);
+        return;
+    }
+    for (int i = 0; i < n; ++i) {
+        if (isQueenValid(v, row, i, n)) {
+            v[row][i] = 'Q';
+            solveNQueens(vv, v, row + 1, n);
+            v[row][i] = '.';
+        }
+    }
+}
+
 vector<vector<string>> solveNQueens(int n)
 {
-    return vector<vector<string>>();
+    vector<vector<string>> res;
+    vector<string> v(n, string(n, '.'));
+    solveNQueens(res, v, 0, n);
+    return res;
+}
+
+//52. N-Queens II
+void totalNQueens(vector<int> &cols, vector<int> &d45, vector<int> &d135, int &count, int row, int n)
+{
+    if (row == n)
+        count++;
+
+    for (int i = 0; i < n; ++i) {
+        int d1 = i - row + n;//???????????????????????????????????????????????????????????????????????????????
+        int d2 = i + row;//???????????????????????????????????????????????????????????????????????????????
+        if (cols[i] || d45[d1] || d135[d2])
+            continue;
+
+        cols[i] = d45[d1] = d135[d2] = 1;
+        totalNQueens(cols, d45, d135, count, row + 1, n);
+        cols[i] = d45[d1] = d135[d2] = 0;
+    }
+}
+
+int totalNQueens(int n)
+{
+    vector<int> cols(n, 0);
+    vector<int> d45(2 * n, 0);
+    vector<int> d135(2 * n, 0);
+    int res = 0;
+    totalNQueens(cols, d45, d135, res, 0, n);
+    return res;
 }
 
 //53. Maximum Subarray
