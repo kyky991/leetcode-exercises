@@ -2,6 +2,7 @@
 #define LEETCODE100_H
 
 #include "common.h"
+#include "leetcode50.h"
 
 //51. N-Queens
 bool isQueenValid(vector<string> &v, int row, int col, int n)

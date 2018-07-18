@@ -2,7 +2,6 @@
 #define LEETCODE50
 
 #include "common.h"
-#include "leetcodeeasylinkedlist.h"
 
 //1. Two Sum
 vector<int> twoSum(vector<int>& nums, int target)
