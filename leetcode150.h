@@ -102,7 +102,7 @@ TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder)
 }
 
 //106. Construct Binary Tree from Inorder and Postorder Travers al
-TreeNode *buildTree(vector<int>& inorder, vector<int>& postorder, int postStart, int inStart, int inEnd)
+TreeNode *buildTreeFromInorderAndPostorder(vector<int>& inorder, vector<int>& postorder, int postStart, int inStart, int inEnd)
 {
     if (postStart < 0 || inStart > inEnd)
         return NULL;
@@ -115,14 +115,14 @@ TreeNode *buildTree(vector<int>& inorder, vector<int>& postorder, int postStart,
             break;
         }
     }
-    root->right = buildTree(inorder, postorder, postStart - 1, index + 1, inEnd);
-    root->left = buildTree(inorder, postorder, postStart - (inEnd - index) - 1, inStart, index - 1);
+    root->right = buildTreeFromInorderAndPostorder(inorder, postorder, postStart - 1, index + 1, inEnd);
+    root->left = buildTreeFromInorderAndPostorder(inorder, postorder, postStart - (inEnd - index) - 1, inStart, index - 1);
     return root;
 }
 
-TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder)
+TreeNode* buildTreeFromInorderAndPostorder(vector<int>& inorder, vector<int>& postorder)
 {
-    return buildTree(inorder, postorder, postorder.size() - 1, 0, inorder.size() - 1);
+    return buildTreeFromInorderAndPostorder(inorder, postorder, postorder.size() - 1, 0, inorder.size() - 1);
 }
 
 //107. Binary Tree Level Order Traversal II
@@ -278,6 +278,134 @@ void flatten(TreeNode* root)
         cur = cur->right;
     }
 #endif
+}
+
+//115. Distinct Subsequences
+int numDistinct(string s, string t)
+{
+    int m = s.size(), n = t.size();
+    vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
+
+    for (int i = 0; i <= m; ++i) {
+        dp[0][i] = 1;
+    }
+
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < m; ++j) {
+            if (t[i] == s[j]) {
+                dp[i + 1][j + 1] = dp[i][j] + dp[i + 1][j];
+            } else {
+                dp[i + 1][j + 1] = dp[i + 1][j];
+            }
+        }
+    }
+
+    return dp[n][m];
+}
+
+//116. Populating Next Right Pointers in Each Node
+void connect(vector<vector<TreeLinkNode *>> &vv, TreeLinkNode *node, int level)
+{
+    if (node) {
+        if (vv.size() <= level)
+            vv.push_back(vector<TreeLinkNode *>());
+
+        vv[level].push_back(node);
+        connect(vv, node->left, level + 1);
+        connect(vv, node->right, level + 1);
+    }
+}
+
+void connect(TreeLinkNode *root)
+{
+#if 1
+    if (root == NULL)
+        return;
+    TreeLinkNode *pre = root;
+    TreeLinkNode *cur = NULL;
+    while (pre->left) {
+        cur = pre;
+        while (cur) {
+            cur->left->next = cur->right;
+            if (cur->next) {
+                cur->right->next = cur->next->left;
+            }
+            cur = cur->next;
+        }
+        pre = pre->left;
+    }
+#else
+    vector<vector<TreeLinkNode *>> vv;
+    connect(vv, root, 0);
+
+    for (int i = 0; i < vv.size(); ++i) {
+        for (int j = 0; j < vv[i].size() - 1; ++j) {
+            vv[i][j]->next = vv[i][j + 1];
+        }
+    }
+#endif
+}
+
+//117. Populating Next Right Pointers in Each Node II
+void connect(TreeLinkNode *root)
+{
+    TreeLinkNode *head = NULL;
+    TreeLinkNode *pre = NULL;
+    TreeLinkNode *cur = root;
+
+    while (cur) {
+        while (cur) {
+            if (cur->left) {
+                if (pre) {
+                    pre->next = cur->left;
+                } else {
+                    head = cur->left;
+                }
+                pre = cur->left;
+            }
+
+            if (cur->right) {
+                if (pre) {
+                    pre->next = cur->right;
+                } else {
+                    head = cur->right;
+                }
+                pre = cur->right;
+            }
+            cur = cur->next;
+        }
+
+        cur = head;
+        head = NULL;
+        pre = NULL;
+    }
+}
+
+//118. Pascal's Triangle
+vector<vector<int>> generate(int numRows)
+{
+    vector<vector<int>> res;
+    for (int i = 0; i < numRows; ++i) {
+        vector<int> v(i + 1, 1);
+        for (int j = 1; j < i; ++j) {
+            v[j] = res[i - 1][j - 1] + res[i - 1][j];
+        }
+        res.push_back(v);
+    }
+    return res;
+}
+
+//119. Pascal's Triangle II
+vector<int> getRow(int rowIndex)
+{
+    vector<int> res(rowIndex + 1, 0);
+    res[0] = 1;
+    for (int i = 1; i < res.size(); ++i) {
+        for (int j = i;  j >= 1; --j) {
+            res[j] += res[j - 1];
+        }
+    }
+    return res;
 }
 
 #endif // LEETCODE150_H

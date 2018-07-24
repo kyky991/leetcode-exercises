@@ -5,6 +5,7 @@
 #include "leetcodebitmanipulation.h"
 #include "leetcode50.h"
 #include "leetcode100.h"
+#include "leetcode150.h"
 
 int main(int argc, char *argv[])
 {
@@ -59,6 +60,8 @@ int main(int argc, char *argv[])
     isScramble("great", "rgeat");
 
     numDecodings("122");
+
+    numDistinct("babgbag", "bag");
 
     return 0;
 }
