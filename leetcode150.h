@@ -408,4 +408,64 @@ vector<int> getRow(int rowIndex)
     return res;
 }
 
+//120. Triangle
+int minimumTotal(vector<vector<int>>& triangle)
+{
+    int n = triangle.size();
+    vector<int> dp(triangle.back());
+
+    for (int row = n - 2; row >= 0; --row) {
+        for (int i = 0; i <= row; ++i) {
+            dp[i] = min(dp[i], dp[i + 1]) + triangle[row][i];
+        }
+    }
+    return dp[0];
+}
+
+//121. Best Time to Buy and Sell Stock
+int maxProfit(vector<int>& prices)
+{
+    int minVal = INT_MAX;
+    int res = 0;
+    for (int i = 0; i < prices.size(); ++i) {
+        minVal = min(minVal, prices[i]);
+        res = max(res, prices[i] - minVal);
+    }
+    return res;
+}
+
+//122. Best Time to Buy and Sell Stock II
+int maxProfit(vector<int>& prices)
+{
+    int res = 0, cur = 0;
+    for (int i = 1; i < prices.size(); ++i) {
+        cur = prices[i] - prices[i - 1];
+        cur = max(0, cur);
+        res += cur;
+    }
+    return res;
+}
+
+//123. Best Time to Buy and Sell Stock III
+int maxProfit(vector<int>& prices)
+{
+    if (prices.size() <= 1)
+        return 0;
+    else {
+        int K = 2;
+        int res = 0;
+        vector<vector<int>> dp(K + 1, vector<int>(prices.size(), 0));
+        for (int i = 1; i <= K; ++i) {
+            int tmp = dp[i - 1][0] - prices[0];
+            for (int j = 1; j < prices.size(); ++j) {
+                dp[i][j] = max(dp[i][j - 1], prices[j] + tmp);
+                tmp = max(tmp, dp[i - 1][j] - prices[j]);
+                res = max(dp[i][j], res);
+            }
+        }
+        return res;
+    }
+}
+
+
 #endif // LEETCODE150_H
