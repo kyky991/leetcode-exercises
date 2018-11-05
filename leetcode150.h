@@ -347,7 +347,7 @@ void connect(TreeLinkNode *root)
 }
 
 //117. Populating Next Right Pointers in Each Node II
-void connect(TreeLinkNode *root)
+void connect2(TreeLinkNode *root)
 {
     TreeLinkNode *head = NULL;
     TreeLinkNode *pre = NULL;
@@ -435,7 +435,7 @@ int maxProfit(vector<int>& prices)
 }
 
 //122. Best Time to Buy and Sell Stock II
-int maxProfit(vector<int>& prices)
+int maxProfit2(vector<int>& prices)
 {
     int res = 0, cur = 0;
     for (int i = 1; i < prices.size(); ++i) {
@@ -447,7 +447,7 @@ int maxProfit(vector<int>& prices)
 }
 
 //123. Best Time to Buy and Sell Stock III
-int maxProfit(vector<int>& prices)
+int maxProfit3(vector<int>& prices)
 {
     if (prices.size() <= 1)
         return 0;
@@ -467,5 +467,176 @@ int maxProfit(vector<int>& prices)
     }
 }
 
+//124. Binary Tree Maximum Path Sum
+int maxPathSum(TreeNode *node, int &count)
+{
+    if (node == NULL)
+        return 0;
+
+    int left = max(0, maxPathSum(node->left, count));
+    int right = max(0, maxPathSum(node->right, count));
+
+    count = max(count, left + right + node->val);
+
+    return max(left, right) + node->val;
+}
+
+int maxPathSum(TreeNode* root)
+{
+    int res = INT_MIN;
+    maxPathSum(root, res);
+    return res;
+}
+
+//125. Valid Palindrome
+bool isPalindrome(string s)
+{
+    int start = 0, end = s.size() - 1;
+    while (start < end) {
+        if (!isalnum(s[start])) {
+            start++;
+            continue;
+        }
+        if (!isalnum(s[end])) {
+            end--;
+            continue;
+        }
+        if (tolower(s[start]) != tolower(s[end])) {
+            return false;
+        } else {
+            start++;
+            end--;
+        }
+    }
+    return true;
+}
+
+//126. Word Ladder II
+vector<vector<string>> findLadders(string beginWord, string endWord, vector<string>& wordList)
+{
+    vector<vector<string>> res;
+    queue<vector<string>> paths;
+    unordered_set<string> wordDict(wordList.begin(), wordList.end());
+
+    paths.push({beginWord});
+    int level = 1;
+    int minLevel = INT_MAX;
+
+    unordered_set<string> visited;
+
+    while (!paths.empty()) {
+        vector<string> path = paths.front();
+        paths.pop();
+        if (path.size() > level) {
+            for (string w : visited)
+                wordDict.erase(w);
+            visited.clear();
+            if (path.size() > minLevel)
+                break;
+            else
+                level = path.size();
+        }
+        string last = path.back();
+
+        for (int i = 0; i < last.size(); ++i) {
+            string news = last;
+            for (char c = 'a'; c <= 'z'; ++c) {
+                news[i] = c;
+                if (wordDict.find(news) != wordDict.end()) {
+                    vector<string> newpath = path;
+                    newpath.push_back(news);
+                    visited.insert(news);
+                    if (news == endWord) {
+                        minLevel = level;
+                        res.push_back(newpath);
+                    } else {
+                        paths.push(newpath);
+                    }
+                }
+            }
+        }
+    }
+
+    return res;
+}
+
+//127. Word Ladder
+void addNextWords(string word, unordered_set<string> &wordDict, queue<string> &visited)
+{
+    wordDict.erase(word);
+    for (int i = 0; i < word.size(); ++i) {
+        string news = word;
+        for (char c = 'a'; c <= 'z'; ++c) {
+            news[i] = c;
+            if (wordDict.find(news) != wordDict.end()) {
+                visited.push(news);
+                wordDict.erase(news);
+            }
+        }
+    }
+}
+
+int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
+    unordered_set<string> wordDict(wordList.begin(), wordList.end());
+    queue<string> visited;
+
+    addNextWords(beginWord, wordDict, visited);
+
+    int res = 1;
+    while (!visited.empty()) {
+        int num = visited.size();
+        for (int i = 0; i < num; ++i) {
+            string s = visited.front();
+            visited.pop();
+            if (s == endWord)
+                return res;
+            addNextWords(s, wordDict, visited);
+        }
+        res++;
+    }
+    return 0;
+}
+
+//128. Longest Consecutive Sequence
+int longestConsecutive(vector<int>& nums) {
+#if 1
+    unordered_map<int, int> m;
+    int res = 0;
+    for (int num : nums) {
+        if (m[num])
+            continue;
+        int left = m[num - 1] ? m[num - 1] : 0;
+        int right = m[num + 1] ? m[num + 1] : 0;
+
+        int sum = left + right + 1;
+        m[num] = sum;
+
+        res = max(res, sum);
+
+        m[num - left] = sum;
+        m[num + right] = sum;
+    }
+    return res;
+#else
+    int size = nums.size();
+    if (size < 2) {
+        return size;
+    }
+
+    sort(nums.begin(), nums.end());
+
+    int res = 1;
+    int cnt = 1;
+    for (int i = 1; i < nums.size(); ++i) {
+        if (nums[i] == nums[i - 1] + 1) {
+            cnt++;
+        } else if (nums[i] != nums[i - 1]) {
+            cnt = 1;
+        }
+        res = max(res, cnt);
+    }
+    return res;
+#endif
+}
 
 #endif // LEETCODE150_H

@@ -63,5 +63,13 @@ int main(int argc, char *argv[])
 
     numDistinct("babgbag", "bag");
 
+    string beginWord = "hit";
+    string endWord = "cog";
+    vector<string> wordList = {"hot","dot","dog","lot","log", "cog"};
+
+    findLadders(beginWord, endWord, wordList);
+
+    ladderLength(beginWord, endWord, wordList);
+
     return 0;
 }

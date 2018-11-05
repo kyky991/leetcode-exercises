@@ -101,7 +101,6 @@ int lengthOfLastWord(string s)
     }
     return result;
 }
-*/
 
 //125. Valid Palindrome
 bool isPalindrome(string s)
@@ -126,7 +125,7 @@ bool isPalindrome(string s)
     }
     return true;
 }
-
+*/
 //344. Reverse String
 string reverseString(string s)
 {
