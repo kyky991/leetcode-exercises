@@ -71,5 +71,8 @@ int main(int argc, char *argv[])
 
     ladderLength(beginWord, endWord, wordList);
 
+    s = "aab";
+    partition(s);
+
     return 0;
 }

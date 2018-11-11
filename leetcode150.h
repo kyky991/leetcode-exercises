@@ -639,4 +639,110 @@ int longestConsecutive(vector<int>& nums) {
 #endif
 }
 
+//129. Sum Root to Leaf Numbers
+int sumNumbers(TreeNode *node, int sum)
+{
+    if (node == NULL)
+        return 0;
+    if (node->left == NULL && node->right == NULL)
+        return sum * 10 + node->val;
+    return sumNumbers(node->left, sum * 10 + node->val) + sumNumbers(node->right, sum * 10 + node->val);
+}
+
+int sumNumbers(TreeNode* root)
+{
+    return sumNumbers(root, 0);
+}
+
+//130. Surrounded Regions
+void check(vector<vector<char>> &board, int i, int j, int row, int col)
+{
+    if (board[i][j] == 'O') {
+        board[i][j] = '1';
+        if (i > 1)
+            check(board, i - 1, j, row, col);
+        if (j > 1)
+            check(board, i, j - 1, row, col);
+        if (i + 1 < row)
+            check(board, i + 1, j, row, col);
+        if (j + 1 < col)
+            check(board, i, j + 1, row, col);
+    }
+}
+
+void solveSurroundedRegions(vector<vector<char>>& board)
+{
+    int row = board.size();
+    if (row < 1)
+        return;
+    int col = board[0].size();
+
+    for (int i = 0; i < row; ++i) {
+        check(board, i, 0, row, col);
+        if (col > 1)
+            check(board, i, col - 1, row, col);
+    }
+    for (int j = 1; j < col - 1; ++j) {
+        check(board, 0, j, row, col);
+        if (row > 1)
+            check(board, row - 1, j, row, col);
+    }
+    for (int i = 0; i < row; ++i) {
+        for (int j = 0; j < col; ++j) {
+            if (board[i][j] == 'O') {
+                board[i][j] = 'X';
+            }
+        }
+    }
+    for (int i = 0; i < row; ++i) {
+        for (int j = 0; j < col; ++j) {
+            if (board[i][j] == '1') {
+                board[i][j] = 'O';
+            }
+        }
+    }
+}
+
+//131. Palindrome Partitioning
+bool isPalindrome(string s, int start, int end)
+{
+    while (start <= end) {
+        if (s[start++] != s[end--])
+            return false;
+    }
+    return true;
+}
+
+void partition(vector<vector<string>> &res, vector<string> &path, string s, int start)
+{
+    if (start == s.size()) {
+        res.push_back(path);
+        return;
+    }
+    for (int i = start; i < s.size(); ++i) {
+        string p = s.substr(start, i - start + 1);
+        if (isPalindrome(p)) {
+            path.push_back(p);
+            partition(res, path, s, i + 1);
+            path.pop_back();
+        }
+    }
+}
+
+vector<vector<string>> partition(string s)
+{
+    vector<vector<string>> res;
+    vector<string> path;
+
+    partition(res, path, s, 0);
+
+    return res;
+}
+
+//132. Palindrome Partitioning II
+int minCut(string s)
+{
+    return 0;
+}
+
 #endif // LEETCODE150_H
