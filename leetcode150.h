@@ -742,7 +742,90 @@ vector<vector<string>> partition(string s)
 //132. Palindrome Partitioning II
 int minCut(string s)
 {
-    return 0;
+    int n = s.size();
+    if (n < 1)
+        return -1;
+
+    vector<vector<bool>> pal(n, vector<bool>(n, false));
+    vector<int> dp(n);
+
+    for (int i = 0; i < n; ++i)
+        dp[i] = i;
+
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j <= i; ++j) {
+            if (s[i] == s[j] && (j + 1 > i - 1 || pal[j + 1][i - 1])) {
+                pal[j][i] = true;
+                if (j == 0)
+                    dp[i] = 0;
+                else
+                    dp[i] = min(dp[i], dp[j - 1] + 1);
+            }
+        }
+    }
+
+    return dp[n - 1];
+}
+
+//133. Clone Graph
+UndirectedGraphNode *clone(unordered_map<UndirectedGraphNode *, UndirectedGraphNode *> &mp, UndirectedGraphNode *node)
+{
+    if (node == NULL)
+        return NULL;
+
+    if (mp.find(node) == mp.end()) {
+        mp[node] = new UndirectedGraphNode(node->label);
+        for (UndirectedGraphNode *neigh : node->neighbors) {
+            mp[node]->neighbors.push_back(clone(mp, neigh));
+        }
+    }
+    return mp[node];
+}
+
+UndirectedGraphNode *cloneGraph(UndirectedGraphNode *node)
+{
+    unordered_map<UndirectedGraphNode *, UndirectedGraphNode *> mp;
+
+    UndirectedGraphNode *copy = clone(mp, node);
+
+    return copy;
+}
+
+//134. Gas Station
+int canCompleteCircuit(vector<int>& gas, vector<int>& cost)
+{
+#if 1
+    int start = 0, total = 0, tank = 0;
+    for (int i = 0; i < gas.size(); ++i) {
+        if ((tank = tank + gas[i] - cost[i]) < 0) {
+            start = i + 1;
+            total += tank;
+            tank = 0;
+        }
+    }
+    return (total + tank < 0) ? -1 : start;
+#else
+    int n = gas.size();
+
+    for (int i = 0; i < n; ++i) {
+        if (gas[i] >= cost[i]) {
+            int tank = 0;
+            int j;
+            for (j = i; j - i < n; ++j) {
+                tank += gas[j % n];
+                tank -= cost[j % n];
+                if (tank < 0) {
+                    break;
+                }
+            }
+            if (j == n + i) {
+                return i;
+            }
+        }
+    }
+
+    return -1;
+#endif
 }
 
 #endif // LEETCODE150_H
