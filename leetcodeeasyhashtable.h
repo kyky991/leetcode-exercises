@@ -9,6 +9,7 @@
 
 using namespace std;
 
+/*
 //136. Single Number
 int singleNumber(vector<int>& nums)
 {
@@ -21,7 +22,7 @@ int singleNumber(vector<int>& nums)
 
     return result;
 }
-
+*/
 //202. Happy Number
 bool isHappy(int n)
 {

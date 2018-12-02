@@ -39,7 +39,6 @@ struct TreeLinkNode {
     TreeLinkNode(int x) : val(x), left(NULL), right(NULL), next(NULL) {}
 };
 
-
 struct UndirectedGraphNode {
     int label;
     vector<UndirectedGraphNode *> neighbors;
@@ -47,6 +46,10 @@ struct UndirectedGraphNode {
     UndirectedGraphNode(int x) : label(x) {}
 };
 
+struct RandomListNode {
+    int label;
+    RandomListNode *next, *random;
+    RandomListNode(int x) : label(x), next(NULL), random(NULL) {}
+};
 
 #endif // COMMON
-

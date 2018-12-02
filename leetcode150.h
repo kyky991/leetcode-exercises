@@ -828,4 +828,146 @@ int canCompleteCircuit(vector<int>& gas, vector<int>& cost)
 #endif
 }
 
+//135. Candy
+int candy(vector<int>& ratings)
+{
+    int n = ratings.size();
+    int res = 0;
+
+    vector<int> candies(n, 1);
+
+    for (int i = 1; i < n; ++i) {
+        if (ratings[i] > ratings[i - 1]) {
+            candies[i] = candies[i - 1] + 1;
+        }
+    }
+
+    for (int i = n - 1; i > 0; --i) {
+        if (ratings[i] < ratings[i - 1]) {
+            candies[i - 1] = max(candies[i - 1], candies[i] + 1);
+        }
+    }
+
+    for (int i = 0; i < n; ++i) {
+        res += candies[i];
+    }
+
+    return res;
+}
+
+//136. Single Number
+int singleNumber(vector<int>& nums)
+{
+    //A XOR A = 0
+    int result = 0;
+
+    for (int i = 0; i < nums.size(); ++i) {
+        result ^= nums[i];
+    }
+
+    return result;
+}
+
+//137. Single Number II
+int singleNumberII(vector<int>& nums)
+{
+    int ones = 0, twos = 0;
+    for(int i = 0; i < nums.size(); i++){
+        ones = (ones ^ nums[i]) & ~twos;
+        twos = (twos ^ nums[i]) & ~ones;
+    }
+    return ones;
+}
+
+//138. Copy List with Random Pointer
+RandomListNode *copyRandomListNext(unordered_map<RandomListNode *, RandomListNode *> &m, RandomListNode *head)
+{
+    if (head == NULL) {
+        return NULL;
+    }
+
+    RandomListNode *node = new RandomListNode(head->label);
+
+    m[head] = node;
+
+    node->next = copyRandomListNext(m, head->next);
+
+    return node;
+}
+
+RandomListNode *copyRandomList(RandomListNode *head)
+{
+#if 1
+    RandomListNode *tmp = head, *next;
+
+    while (tmp != NULL) {
+        next = tmp->next;
+
+        RandomListNode *copy = new RandomListNode(tmp->label);
+        tmp->next = copy;
+        copy->next = next;
+
+        tmp = next;
+    }
+
+    tmp = head;
+    while (tmp != NULL) {
+        if (tmp->random != NULL) {
+            tmp->next->random = tmp->random->next;
+        }
+        tmp = tmp->next->next;
+    }
+
+    tmp = head;
+    RandomListNode pre(0);
+    RandomListNode *copy, *copyTmp = &pre;
+    while (tmp != NULL) {
+        next = tmp->next->next;
+
+        copy = tmp->next;
+        copyTmp->next = copy;
+        copyTmp = copy;
+
+        tmp->next = next;
+
+        tmp = next;
+    }
+
+    return pre.next;
+#else
+    unordered_map<RandomListNode *, RandomListNode *> m;
+    m[NULL] = NULL;
+
+    RandomListNode *result = copyRandomListNext(m, head);
+
+    RandomListNode *tmp = result;
+    RandomListNode *tmp2 = head;
+    while (tmp != NULL && tmp2 != NULL) {
+        tmp->random = m[tmp2->random];
+        tmp = tmp->next;
+        tmp2 = tmp2->next;
+    }
+
+    return result;
+#endif
+}
+
+//139. Word Break
+bool wordBreak(string s, vector<string> &wordDict)
+{
+    vector<int> dp(s.length() + 1, 0);
+    dp[0] = 1;
+
+
+    for (int i = 1; i <= s.length(); ++i) {
+        for (int j = 0; j < i; ++j) {
+            if (dp[j] && (find(wordDict.begin(), wordDict.end(), s.substr(j, i - j)) != wordDict.end())) {
+                dp[i] = 1;
+                break;
+            }
+        }
+    }
+    return dp[s.length()];
+}
+
 #endif // LEETCODE150_H
