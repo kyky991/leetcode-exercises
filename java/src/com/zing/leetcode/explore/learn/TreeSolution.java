@@ -233,4 +233,71 @@ class TreeSolution {
         return isSymmetric(left.left, right.right) && isSymmetric(left.right, right.left);
     }
 
+    public boolean isSymmetric2(TreeNode root) {
+        if (root == null) {
+            return true;
+        }
+
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(root.left);
+        stack.push(root.right);
+        while (!stack.isEmpty()) {
+            TreeNode n1 = stack.pop(), n2 = stack.pop();
+            if (n1 == null && n2 == null) {
+                continue;
+            }
+            if (n1 == null || n2 == null || n1.val != n2.val) {
+                return false;
+            }
+            stack.push(n1.left);
+            stack.push(n2.right);
+            stack.push(n1.right);
+            stack.push(n2.left);
+        }
+        return true;
+    }
+
+    /**
+     * Path Sum
+     */
+    public boolean hasPathSum(TreeNode root, int sum) {
+        if (root == null) {
+            return false;
+        }
+        if (root.left == null && root.right == null) {
+            return sum == root.val;
+        }
+        return hasPathSum(root.left, sum - root.val) || hasPathSum(root.right, sum - root.val);
+    }
+
+    /**
+     * Construct Binary Tree from Inorder and Postorder Traversal
+     */
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
+        if (inorder == null || postorder == null || inorder.length != postorder.length) {
+            return null;
+        }
+        return buildTree(inorder, 0, inorder.length - 1, postorder, 0, postorder.length - 1);
+    }
+
+    public TreeNode buildTree(int[] inorder, int is, int ie, int[] postorder, int ps, int pe) {
+        TreeNode node = null;
+        if (pe >= ps && ie >= is) {
+            node = new TreeNode();
+            node.val = postorder[pe];
+
+            int index = -1;
+            for (int i = is; i <= ie; ++i) {
+                if (inorder[i] == node.val) {
+                    index = i;
+                }
+            }
+
+            int leftLength = index - is;
+            node.left = buildTree(inorder, is, index - 1, postorder, ps, ps + leftLength - 1);
+            node.right = buildTree(inorder, index + 1, ie, postorder, ps + index - is, pe - 1);
+        }
+
+        return node;
+    }
 }
