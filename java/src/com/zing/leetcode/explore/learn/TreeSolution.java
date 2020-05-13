@@ -283,8 +283,7 @@ class TreeSolution {
     public TreeNode buildTree(int[] inorder, int is, int ie, int[] postorder, int ps, int pe) {
         TreeNode node = null;
         if (pe >= ps && ie >= is) {
-            node = new TreeNode();
-            node.val = postorder[pe];
+            node = new TreeNode(postorder[pe]);
 
             int index = -1;
             for (int i = is; i <= ie; ++i) {
@@ -295,7 +294,37 @@ class TreeSolution {
 
             int leftLength = index - is;
             node.left = buildTree(inorder, is, index - 1, postorder, ps, ps + leftLength - 1);
-            node.right = buildTree(inorder, index + 1, ie, postorder, ps + index - is, pe - 1);
+            node.right = buildTree(inorder, index + 1, ie, postorder, ps + leftLength, pe - 1);
+        }
+
+        return node;
+    }
+
+    /**
+     * Construct Binary Tree from Preorder and Inorder Traversal
+     */
+    public TreeNode buildTree2(int[] preorder, int[] inorder) {
+        if (inorder == null || preorder == null || inorder.length != preorder.length) {
+            return null;
+        }
+        return buildTree2(preorder, 0, preorder.length - 1, inorder, 0, inorder.length - 1);
+    }
+
+    public TreeNode buildTree2(int[] preorder, int ps, int pe, int[] inorder, int is, int ie) {
+        TreeNode node = null;
+        if (pe >= ps && ie >= is) {
+            node = new TreeNode(preorder[ps]);
+
+            int index = -1;
+            for (int i = is; i <= ie; ++i) {
+                if (inorder[i] == node.val) {
+                    index = i;
+                }
+            }
+
+            int leftLength = index - is;
+            node.left = buildTree2(preorder, ps + 1, ps + leftLength, inorder, is, index - 1);
+            node.right = buildTree2(preorder, ps + 1 + leftLength, pe, inorder, index + 1, ie);
         }
 
         return node;
