@@ -329,4 +329,57 @@ class TreeSolution {
 
         return node;
     }
+
+    /**
+     * Populating Next Right Pointers in Each Node
+     */
+    public Node connect(Node root) {
+        if (root == null) {
+            return null;
+        }
+
+        Queue<Node> queue = new LinkedList<>();
+        queue.add(root);
+
+        while (!queue.isEmpty()) {
+            List<Node> list = new ArrayList<>();
+            int size = queue.size();
+            for (int i = 0; i < size; i++) {
+                Node node = queue.poll();
+                if (node.left != null) {
+                    queue.add(node.left);
+                    list.add(node.left);
+                }
+                if (node.right != null) {
+                    queue.add(node.right);
+                    list.add(node.right);
+                }
+            }
+            for (int i = 0; i < list.size() - 1; i++) {
+                list.get(i).next = list.get(i + 1);
+            }
+        }
+        return root;
+    }
+
+    public Node connect2(Node root) {
+        if (root == null) {
+            return null;
+        }
+
+        Node pre = root;
+        Node cur = null;
+        while (pre.left != null) {
+            cur = pre;
+            while (cur != null) {
+                cur.left.next = cur.right;
+                if (cur.next != null) {
+                    cur.right.next = cur.next.left;
+                }
+                cur = cur.next;
+            }
+            pre = pre.left;
+        }
+        return root;
+    }
 }
