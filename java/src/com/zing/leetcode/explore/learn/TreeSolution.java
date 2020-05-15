@@ -382,4 +382,69 @@ class TreeSolution {
         }
         return root;
     }
+
+    /**
+     * Populating Next Right Pointers in Each Node II
+     */
+    public Node connectII(Node root) {
+        if (root == null) {
+            return null;
+        }
+
+        LinkedList<Node> queue = new LinkedList<>();
+        queue.add(root);
+
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            for (int i = 0; i < size; i++) {
+                Node node = queue.poll();
+                if (node.left != null) {
+                    queue.add(node.left);
+                }
+                if (node.right != null) {
+                    queue.add(node.right);
+                }
+            }
+            for (int i = 0; i < queue.size() - 1; i++) {
+                queue.get(i).next = queue.get(i + 1);
+            }
+        }
+        return root;
+    }
+
+    public Node connectII2(Node root) {
+        if (root == null) {
+            return null;
+        }
+
+        Node cur = root;
+        Node pre = null;
+        Node node = null;
+
+        while (cur != null) {
+            while (cur != null) {
+                if (cur.left != null) {
+                    if (node != null) {
+                        node.next = cur.left;
+                    } else {
+                        pre = cur.left;
+                    }
+                    node = cur.left;
+                }
+                if (cur.right != null) {
+                    if (node != null) {
+                        node.next = cur.right;
+                    } else {
+                        pre = cur.right;
+                    }
+                    node = cur.right;
+                }
+                cur = cur.next;
+            }
+            cur = pre;
+            pre = null;
+            node = null;
+        }
+        return root;
+    }
 }
