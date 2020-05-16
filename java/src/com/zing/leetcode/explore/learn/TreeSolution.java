@@ -338,25 +338,22 @@ class TreeSolution {
             return null;
         }
 
-        Queue<Node> queue = new LinkedList<>();
+        LinkedList<Node> queue = new LinkedList<>();
         queue.add(root);
 
         while (!queue.isEmpty()) {
-            List<Node> list = new ArrayList<>();
             int size = queue.size();
             for (int i = 0; i < size; i++) {
                 Node node = queue.poll();
                 if (node.left != null) {
                     queue.add(node.left);
-                    list.add(node.left);
                 }
                 if (node.right != null) {
                     queue.add(node.right);
-                    list.add(node.right);
                 }
             }
-            for (int i = 0; i < list.size() - 1; i++) {
-                list.get(i).next = list.get(i + 1);
+            for (int i = 0; i < queue.size() - 1; i++) {
+                queue.get(i).next = queue.get(i + 1);
             }
         }
         return root;
@@ -446,5 +443,85 @@ class TreeSolution {
             node = null;
         }
         return root;
+    }
+
+    public Node connectII3(Node root) {
+        if (root == null) {
+            return null;
+        }
+
+        Node tmp = new Node(0);
+        Node node = root;
+        while (node != null) {
+            Node cur = tmp;
+            while (node != null) {
+                if (node.left != null) {
+                    cur.next = node.left;
+                    cur = node.left;
+                }
+                if (node.right != null) {
+                    cur.next = node.right;
+                    cur = node.right;
+                }
+                node = node.next;
+            }
+            node = tmp.next;
+            tmp.next = null;
+        }
+        return root;
+    }
+
+    /**
+     * Lowest Common Ancestor of a Binary Tree
+     */
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if (root == null || root == p || root == q) {
+            return root;
+        }
+        TreeNode left = lowestCommonAncestor(root.left, p, q);
+        TreeNode right = lowestCommonAncestor(root.right, p, q);
+        if (left != null && right != null) {
+            return root;
+        }
+        return left != null ? left : right;
+    }
+
+    /**
+     * Serialize and Deserialize Binary Tree
+     */
+    class Codec {
+        // Encodes a tree to a single string.
+        public String serialize(TreeNode root) {
+            StringBuilder sb = new StringBuilder();
+            serialize(root, sb);
+            return sb.toString();
+        }
+
+        // Decodes your encoded data to tree.
+        public TreeNode deserialize(String data) {
+            return deserialize(new LinkedList<>(Arrays.asList(data.split(","))));
+        }
+
+        private void serialize(TreeNode root, StringBuilder sb) {
+            if (root == null) {
+                sb.append("null").append(",");
+            } else {
+                sb.append(root.val).append(",");
+                serialize(root.left, sb);
+                serialize(root.right, sb);
+            }
+        }
+
+        private TreeNode deserialize(Queue<String> list) {
+            String val = list.remove();
+            if ("null".equals(val)) {
+                return null;
+            } else {
+                TreeNode node = new TreeNode(Integer.parseInt(val));
+                node.left = deserialize(list);
+                node.right = deserialize(list);
+                return node;
+            }
+        }
     }
 }
