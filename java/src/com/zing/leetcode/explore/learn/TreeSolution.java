@@ -489,7 +489,7 @@ class TreeSolution {
     /**
      * Serialize and Deserialize Binary Tree
      */
-    class Codec {
+    static class Codec {
         // Encodes a tree to a single string.
         public String serialize(TreeNode root) {
             StringBuilder sb = new StringBuilder();
@@ -513,6 +513,9 @@ class TreeSolution {
         }
 
         private TreeNode deserialize(Queue<String> list) {
+            if (list.isEmpty()) {
+                return null;
+            }
             String val = list.remove();
             if ("null".equals(val)) {
                 return null;
@@ -524,4 +527,26 @@ class TreeSolution {
             }
         }
     }
+
+    /**
+     * Count Univalue Subtrees
+     */
+    public int countUnivalSubtrees(TreeNode root) {
+        int[] count = new int[1];
+        isUnival(root, -1, count);
+        return count[0];
+    }
+
+    private boolean isUnival(TreeNode node, int val, int[] count) {
+        if (node == null) {
+            return true;
+        }
+        if (isUnival(node.left, node.val, count) && isUnival(node.right, node.val, count)) {
+            count[0]++;
+            return node.val == val;
+        } else {
+            return false;
+        }
+    }
+
 }
