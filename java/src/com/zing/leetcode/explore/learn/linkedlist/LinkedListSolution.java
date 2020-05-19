@@ -1,5 +1,8 @@
 package com.zing.leetcode.explore.learn.linkedlist;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Zing
  * @date 2020-05-17
@@ -293,5 +296,61 @@ public class LinkedListSolution {
         }
 
         return newHead.next;
+    }
+
+    /**
+     * Flatten a Multilevel Doubly Linked List
+     */
+    public MultilevelNode flatten(MultilevelNode head) {
+        MultilevelNode cur = head;
+        while (cur != null) {
+            if (cur.child == null) {
+                cur = cur.next;
+                continue;
+            }
+            MultilevelNode child = cur.child;
+            while (child.next != null) {
+                child = child.next;
+            }
+            child.next = cur.next;
+            if (cur.next != null) {
+                cur.next.prev = child;
+            }
+            cur.next = cur.child;
+            cur.child.prev = cur;
+            cur.child = null;
+        }
+        return head;
+    }
+
+    /**
+     * Copy List with Random Pointer
+     */
+    public RandomNode copyRandomList(RandomNode head) {
+        Map<RandomNode, RandomNode> map = new HashMap<>();
+
+        RandomNode newNode = new RandomNode(0);
+        RandomNode cur = head;
+        RandomNode newCur = newNode;
+
+        while (cur != null) {
+            RandomNode node = new RandomNode(cur.val);
+            map.put(cur, node);
+
+            newCur.next = node;
+            cur = cur.next;
+            newCur = newCur.next;
+        }
+        cur = head;
+        newCur = newNode.next;
+        while (cur != null) {
+            if (cur.random != null) {
+                newCur.random = map.get(cur.random);
+            }
+
+            cur = cur.next;
+            newCur = newCur.next;
+        }
+        return newNode.next;
     }
 }
