@@ -93,4 +93,60 @@ public class Solution {
         }
         return -1;
     }
+
+    /**
+     * First Bad Version
+     */
+    public int firstBadVersion(int n) {
+        int left = 1, right = n;
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+            if (!isBadVersion(mid)) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        return right;
+    }
+
+    private boolean isBadVersion(int version) {
+        return true;
+    }
+
+    /**
+     * Find Peak Element
+     */
+    public int findPeakElement(int[] nums) {
+        int left = 0, right = nums.length - 1;
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+            int mid2 = mid + 1;
+            if (nums[mid] < nums[mid2]) {
+                left = mid2;
+            } else {
+                right = mid;
+            }
+        }
+        return left;
+    }
+
+    /**
+     * Find Minimum in Rotated Sorted Array
+     */
+    public int findMin(int[] nums) {
+        int left = 0, right = nums.length - 1;
+        while (left < right) {
+            if (nums[left] < nums[right]) {
+                return nums[left];
+            }
+            int mid = left + (right - left) / 2;
+            if (nums[mid] >= nums[left]) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        return nums[left];
+    }
 }
