@@ -353,4 +353,128 @@ public class LinkedListSolution {
         }
         return newNode.next;
     }
+
+    /**
+     * Copy List with Random Pointer
+     */
+    public RandomNode copyRandomList2(RandomNode head) {
+        RandomNode cur = head;
+        RandomNode next = null;
+
+        while (cur != null) {
+            next = cur.next;
+            cur.next = new RandomNode(cur.val);
+            cur.next.next = next;
+            cur = cur.next.next;
+        }
+
+        cur = head;
+        while (cur != null) {
+            if (cur.random != null) {
+                cur.next.random = cur.random.next;
+            }
+            cur = cur.next.next;
+        }
+
+        cur = head;
+        RandomNode newHead = new RandomNode(0);
+        RandomNode newCur = newHead;
+        while (cur != null) {
+            next = cur.next.next;
+
+            newCur.next = cur.next;
+            newCur = newCur.next;
+            cur.next = next;
+
+            cur = cur.next;
+        }
+        return newHead.next;
+    }
+
+    /**
+     * Rotate List
+     */
+    public ListNode rotateRight(ListNode head, int k) {
+        if (head == null || k == 0) {
+            return head;
+        }
+
+        int length = 0;
+        ListNode cur = head;
+        ListNode tail = null;
+        while (cur != null) {
+            length++;
+            if (cur.next == null) {
+                tail = cur;
+            }
+            cur = cur.next;
+        }
+        int offset = length - k % length;
+        if (offset == 0 || offset == length) {
+            return head;
+        } else {
+            ListNode newHead = null;
+            cur = head;
+            while (cur != null) {
+                offset--;
+                if (offset == 0) {
+                    break;
+                }
+                cur = cur.next;
+            }
+            newHead = cur.next;
+            cur.next = null;
+            tail.next = head;
+            return newHead;
+        }
+    }
+
+    public ListNode rotateRight2(ListNode head, int k) {
+        if (head == null) {
+            return null;
+        }
+
+        int length = 1;
+        ListNode tail = head;
+        while (tail.next != null) {
+            length++;
+            tail = tail.next;
+        }
+        tail.next = head;
+
+        if ((k = k % length) > 0) {
+            for (int i = 0; i < length - k; i++) {
+                tail = tail.next;
+            }
+        }
+        ListNode newHead = tail.next;
+        tail.next = null;
+        return newHead;
+    }
+
+    /**
+     * Insert into a Cyclic Sorted List
+     */
+    ListNode insert(ListNode head, int insertVal) {
+        ListNode node = new ListNode(insertVal);
+        if (head == null) {
+            node.next = node;
+            return node;
+        }
+        ListNode cur = head;
+        ListNode next = cur.next;
+        while (next != head) {
+            if (cur.val <= insertVal && next.val >= insertVal) {
+                break;
+            }
+            if (cur.val > next.val && (cur.val < insertVal || next.val < insertVal)) {
+                break;
+            }
+            cur = cur.next;
+            next = next.next;
+        }
+        cur.next = node;
+        node.next = next;
+        return head;
+    }
 }
