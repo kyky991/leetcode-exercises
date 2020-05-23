@@ -1,5 +1,9 @@
 package com.zing.leetcode.explore.learn.binarysearch;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * @author Zing
  * @date 2020-05-20
@@ -173,15 +177,31 @@ public class Solution {
         result[0] = left;
 
         right = nums.length - 1;
-        while (left <= right) {
-            int mid = left + (right - left) / 2;
+        while (left < right) {
+            int mid = left + (right - left) / 2 + 1;
             if (nums[mid] > target) {
                 right = mid - 1;
             } else {
-                left = mid + 1;
+                left = mid;
             }
         }
         result[1] = right;
         return result;
+    }
+
+    /**
+     *  Find K Closest Elements
+     */
+    public List<Integer> findClosestElements(int[] arr, int k, int x) {
+        int left = 0, right = arr.length - k;
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+            if (x - arr[mid] > arr[mid + k] - x) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        return Arrays.stream(arr, left, left + k).boxed().collect(Collectors.toList());
     }
 }
