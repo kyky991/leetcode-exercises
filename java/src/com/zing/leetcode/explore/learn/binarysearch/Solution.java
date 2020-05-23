@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 public class Solution {
 
     /**
+     * Binary Search Template I
      * Binary Search
      */
     public int search(int[] nums, int target) {
@@ -29,6 +30,7 @@ public class Solution {
     }
 
     /**
+     * Binary Search Template I
      * Sqrt(x)
      */
     public int mySqrt(int x) {
@@ -47,6 +49,7 @@ public class Solution {
     }
 
     /**
+     * Binary Search Template I
      * Guess Number Higher or Lower
      */
     public int guessNumber(int n) {
@@ -69,6 +72,7 @@ public class Solution {
     }
 
     /**
+     * Binary Search Template I
      * Search in Rotated Sorted Array
      */
     public int searchRotated(int[] nums, int target) {
@@ -99,6 +103,7 @@ public class Solution {
     }
 
     /**
+     * Binary Search Template II
      * First Bad Version
      */
     public int firstBadVersion(int n) {
@@ -119,6 +124,7 @@ public class Solution {
     }
 
     /**
+     * Binary Search Template II
      * Find Peak Element
      */
     public int findPeakElement(int[] nums) {
@@ -136,6 +142,7 @@ public class Solution {
     }
 
     /**
+     * Binary Search Template II
      * Find Minimum in Rotated Sorted Array
      */
     public int findMin(int[] nums) {
@@ -155,6 +162,7 @@ public class Solution {
     }
 
     /**
+     * Binary Search Template III
      * Search for a Range
      */
     public int[] searchRange(int[] nums, int target) {
@@ -190,7 +198,8 @@ public class Solution {
     }
 
     /**
-     *  Find K Closest Elements
+     * Binary Search Template III
+     * Find K Closest Elements
      */
     public List<Integer> findClosestElements(int[] arr, int k, int x) {
         int left = 0, right = arr.length - k;
@@ -203,5 +212,64 @@ public class Solution {
             }
         }
         return Arrays.stream(arr, left, left + k).boxed().collect(Collectors.toList());
+    }
+
+    /**
+     * Pow(x, n)
+     */
+    public double myPow(double x, int n) {
+        if (n == 0) {
+            return 1D;
+        }
+        if (n == Integer.MIN_VALUE) {
+            x = x * x;
+            n = n / 2;
+        }
+        if (n < 0) {
+            n = -n;
+            x = 1 / x;
+        }
+        return n % 2 == 0 ? myPow(x * x, n / 2) : x * myPow(x * x, n / 2);
+    }
+
+    /**
+     * Valid Perfect Square
+     */
+    public boolean isPerfectSquare(int num) {
+        int left = 1, right = num;
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+            if (mid < num / mid) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        return left * left == num;
+    }
+
+    public boolean isPerfectSquare2(int num) {
+        int i = 1;
+        while (num > 0) {
+            num -= i;
+            i += 2;
+        }
+        return num == 0;
+    }
+
+    /**
+     * Find Smallest Letter Greater Than Target
+     */
+    public char nextGreatestLetter(char[] letters, char target) {
+        int left = 0, right = letters.length;
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+            if (letters[mid] <= target) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        return letters[right % letters.length];
     }
 }
