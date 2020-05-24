@@ -1,7 +1,6 @@
 package com.zing.leetcode.explore.learn.binarysearch;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -271,5 +270,119 @@ public class Solution {
             }
         }
         return letters[right % letters.length];
+    }
+
+    /**
+     * Find Minimum in Rotated Sorted Array II
+     */
+    public int findMinII(int[] nums) {
+        return findMinII(nums, 0, nums.length - 1);
+    }
+
+    private int findMinII(int[] nums, int left, int right) {
+        if (left < right) {
+            int mid = left + (right - left) / 2;
+            return Math.min(findMinII(nums, left, mid), findMinII(nums, mid + 1, right));
+        }
+        return nums[left];
+    }
+
+    public int findMinII2(int[] nums) {
+        int left = 0, right = nums.length - 1;
+        while (left < right) {
+            int mid = (left + right) >>> 1;
+            if (nums[mid] > nums[right]) {
+                left = mid + 1;
+            } else if (nums[mid] < nums[right]) {
+                right = mid;
+            } else {
+                right--;
+            }
+        }
+        return nums[left];
+    }
+
+    /**
+     * Intersection of Two Arrays
+     */
+    public int[] intersection(int[] nums1, int[] nums2) {
+        int[] source = nums1.length < nums2.length ? nums1 : nums2;
+        int[] target = nums1.length < nums2.length ? nums2 : nums1;
+        Arrays.sort(target);
+
+        Set<Integer> result = new HashSet<>();
+        for (int i : source) {
+            int left = 0, right = target.length - 1;
+            while (left <= right) {
+                int mid = (left + right) >>> 1;
+                if (target[mid] == i) {
+                    result.add(i);
+                    break;
+                } else if (target[mid] > i) {
+                    right = mid - 1;
+                } else {
+                    left = mid + 1;
+                }
+            }
+        }
+        return result.stream().mapToInt(Integer::intValue).toArray();
+    }
+
+    /**
+     * Intersection of Two Arrays II
+     */
+    public int[] intersectionII(int[] nums1, int[] nums2) {
+        Map<Integer, Integer> map = new HashMap<>();
+        List<Integer> result = new ArrayList<>();
+        for (int i = 0; i < nums1.length; i++) {
+            if (map.containsKey(nums1[i])) {
+                map.put(nums1[i], map.get(nums1[i]) + 1);
+            } else {
+                map.put(nums1[i], 1);
+            }
+        }
+        for (int i = 0; i < nums2.length; i++) {
+            if (map.containsKey(nums2[i]) && map.get(nums2[i]) > 0) {
+                result.add(nums2[i]);
+                map.put(nums2[i], map.get(nums2[i]) - 1);
+            }
+        }
+        return result.stream().mapToInt(Integer::intValue).toArray();
+    }
+
+    /**
+     * Two Sum II - Input array is sorted
+     */
+    public int[] twoSumII(int[] numbers, int target) {
+        for (int i = 0; i < numbers.length; i++) {
+            int value = target - numbers[i];
+            for (int j = i + 1; j < numbers.length; j++) {
+                if (value == numbers[j]) {
+                    return new int[] {i + 1, j + 1};
+                }
+            }
+        }
+        return new int[0];
+    }
+
+    public int[] twoSumII2(int[] numbers, int target) {
+        int[] result = new int[2];
+        if (numbers == null || numbers.length < 2) {
+            return result;
+        }
+        int left = 0, right = numbers.length - 1;
+        while (left < right) {
+            int sum = numbers[left] + numbers[right];
+            if (sum == target) {
+                result[0] = left + 1;
+                result[1] = right + 1;
+                break;
+            } else if (sum > target) {
+                right--;
+            } else {
+                left++;
+            }
+        }
+        return result;
     }
 }
