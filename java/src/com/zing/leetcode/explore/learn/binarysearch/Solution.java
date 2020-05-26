@@ -358,7 +358,7 @@ public class Solution {
             int value = target - numbers[i];
             for (int j = i + 1; j < numbers.length; j++) {
                 if (value == numbers[j]) {
-                    return new int[] {i + 1, j + 1};
+                    return new int[]{i + 1, j + 1};
                 }
             }
         }
@@ -407,5 +407,44 @@ public class Solution {
         return -1;
     }
 
-
+    /**
+     * Median of Two Sorted ArrayscompareAndSetTail
+     */
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        int m = nums1.length, n = nums2.length;
+        if (m > n) {
+            return findMedianSortedArrays(nums2, nums1);
+        }
+        int minIdx = 0, maxIdx = m;
+        int i = 0, j = 0, n1 = 0, n2 = 0, mid = (m + n + 1) >> 1;
+        while (minIdx <= maxIdx) {
+            i = (minIdx + maxIdx) >> 1;
+            j = mid - i;
+            if (i < m && j > 0 && nums2[j - 1] > nums1[i]) {
+                minIdx = i + 1;
+            } else if (i > 0 && j < n && nums1[i - 1] > nums2[j]) {
+                maxIdx = i - 1;
+            } else {
+                if (i == 0) {
+                    n1 = nums2[j - 1];
+                } else if (j == 0) {
+                    n1 = nums1[i - 1];
+                } else {
+                    n1 = Math.max(nums1[i - 1], nums2[j - 1]);
+                }
+                break;
+            }
+        }
+        if ((m + n) % 2 == 1) {
+            return n1;
+        }
+        if (i == m) {
+            n2 = nums2[j];
+        } else if (j == n) {
+            n2 = nums1[i];
+        } else {
+            n2 = Math.min(nums1[i], nums2[j]);
+        }
+        return (n1 + n2) / 2.0;
+    }
 }
