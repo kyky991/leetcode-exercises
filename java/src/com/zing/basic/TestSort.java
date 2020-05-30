@@ -145,6 +145,59 @@ public class TestSort {
         }
     }
 
+    /**
+     * 最佳情况：T(n) = O(nlogn)   最差情况：T(n) = O(n^2)   平均情况：T(n) = O(nlogn)
+     */
+    public static int[] quickSort(int[] arr) {
+        if (arr == null || arr.length == 0) {
+            return arr;
+        }
+        quickSort(arr, 0, arr.length - 1);
+        return arr;
+    }
+
+    private static void quickSort(int[] arr, int left, int right) {
+        if (left < right) {
+            int p = partition(arr, left, right);
+            quickSort(arr, left, p - 1);
+            quickSort(arr, p + 1, right);
+        }
+    }
+
+    /**
+     * 挖坑填数发
+     */
+    private static int partition(int[] arr, int left, int right) {
+        int i = left, j = right;
+        //s[l]即s[i]就是第一个坑
+        int tmp = arr[left];
+        while (i < j) {
+            // 从右向左找小于x的数来填s[i]
+            while (i < j && arr[j] >= tmp) {
+                j--;
+            }
+            if (i < j) {
+                //将s[j]填到s[i]中，s[j]就形成了一个新的坑
+                arr[i] = arr[j];
+                i++;
+            }
+
+            // 从左向右找大于或等于x的数来填s[j]
+            while (i < j && arr[i] <= tmp) {
+                i++;
+            }
+            if (i < j) {
+                //将s[i]填到s[j]中，s[i]就形成了一个新的坑
+                arr[j] = arr[i];
+                j--;
+            }
+        }
+
+        //退出时，i等于j。将x填到这个坑中。
+        arr[i] = tmp;
+        return i;
+    }
+
     public static void main(String[] args) {
         List<Integer> list = Arrays.asList(2, 5, 4, 1, 9, 5, 4, 3);
 
@@ -167,6 +220,10 @@ public class TestSort {
         Collections.shuffle(list);
         arr = list.stream().mapToInt(Integer::intValue).toArray();
         System.out.println("before:" + Arrays.toString(arr) + "\t\tafter:" + Arrays.toString(mergeSort(arr)));
+
+        Collections.shuffle(list);
+        arr = list.stream().mapToInt(Integer::intValue).toArray();
+        System.out.println("before:" + Arrays.toString(arr) + "\t\tafter:" + Arrays.toString(quickSort(arr)));
     }
 
 }
