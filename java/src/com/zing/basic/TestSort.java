@@ -146,7 +146,7 @@ public class TestSort {
     }
 
     /**
-     * 最佳情况：T(n) = O(nlogn)   最差情况：T(n) = O(n^2)   平均情况：T(n) = O(nlogn)
+     * 最佳情况：T(n) = O(nlogn)   最差情况：T(n) = O(n^2)   平均情况：T(n) = O(nlogn)  不稳定
      */
     public static int[] quickSort(int[] arr) {
         if (arr == null || arr.length == 0) {
@@ -165,7 +165,7 @@ public class TestSort {
     }
 
     /**
-     * 挖坑填数发
+     * 挖坑填数法
      */
     private static int partition(int[] arr, int left, int right) {
         int i = left, j = right;
@@ -198,6 +198,55 @@ public class TestSort {
         return i;
     }
 
+    /**
+     * 最佳情况：T(n) = O(nlogn) 最差情况：T(n) = O(nlogn) 平均情况：T(n) = O(nlogn)  不稳定
+     * <p>
+     * a.将无需序列构建成一个堆，根据升序降序需求选择大顶堆或小顶堆;
+     * b.将堆顶元素与末尾元素交换，将最大元素"沉"到数组末端;
+     * c.重新调整结构，使其满足堆定义，然后继续交换堆顶元素与当前末尾元素，反复执行调整+交换步骤，直到整个序列有序。
+     */
+    public static int[] heapSort(int[] arr) {
+        if (arr == null || arr.length == 0) {
+            return arr;
+        }
+        //1.构建大顶堆
+        //从最后一个非叶子结点开始
+        for (int i = arr.length / 2 - 1; i >= 0; --i) {
+            adjustHeap(arr, i, arr.length);
+        }
+
+        //2.调整堆结构+交换堆顶元素与末尾元素
+        for (int i = arr.length - 1; i > 0; --i) {
+            //堆顶元素和末尾元素进行交换
+            int tmp = arr[0];
+            arr[0] = arr[i];
+            arr[i] = tmp;
+
+            //重新对堆进行调整
+            adjustHeap(arr, 0, i);
+        }
+        return arr;
+    }
+
+    private static void adjustHeap(int[] arr, int start, int end) {
+        int tmp = arr[start];
+        for (int k = 2 * start + 1; k < end; k = 2 * k + 1) {
+            //如果右边值大于左边值，指向右边
+            if (k + 1 < end && arr[k] < arr[k + 1]) {
+                k++;
+            }
+            //如果子节点大于父节点，将子节点值赋给父节点,并以新的子节点作为父节点（不用进行交换）
+            if (arr[k] > tmp) {
+                arr[start] = arr[k];
+                start = k;
+            } else {
+                break;
+            }
+        }
+        //put the value in the final position
+        arr[start] = tmp;
+    }
+
     public static void main(String[] args) {
         List<Integer> list = Arrays.asList(2, 5, 4, 1, 9, 5, 4, 3);
 
@@ -224,6 +273,10 @@ public class TestSort {
         Collections.shuffle(list);
         arr = list.stream().mapToInt(Integer::intValue).toArray();
         System.out.println("before:" + Arrays.toString(arr) + "\t\tafter:" + Arrays.toString(quickSort(arr)));
+
+        Collections.shuffle(list);
+        arr = list.stream().mapToInt(Integer::intValue).toArray();
+        System.out.println("before:" + Arrays.toString(arr) + "\t\tafter:" + Arrays.toString(heapSort(arr)));
     }
 
 }
