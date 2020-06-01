@@ -247,6 +247,35 @@ public class TestSort {
         arr[start] = tmp;
     }
 
+    /**
+     * 最佳情况：T(n) = O(n+k)  最差情况：T(n) = O(n+k)  平均情况：T(n) = O(n+k)  稳定
+     */
+    public static int[] countingSort(int[] arr) {
+        int min = arr[0];
+        int max = arr[0];
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] < min) {
+                min = arr[i];
+            }
+            if (arr[i] > max) {
+                max = arr[i];
+            }
+        }
+        int[] bucket = new int[max - min + 1];
+        for (int i = 0; i < arr.length; i++) {
+            bucket[arr[i] - min]++;
+        }
+
+        int index = 0;
+        for (int i = 0; i < bucket.length; i++) {
+            while (bucket[i] > 0) {
+                arr[index++] = i + min;
+                bucket[i]--;
+            }
+        }
+        return arr;
+    }
+
     public static void main(String[] args) {
         List<Integer> list = Arrays.asList(2, 5, 4, 1, 9, 5, 4, 3);
 
@@ -277,6 +306,10 @@ public class TestSort {
         Collections.shuffle(list);
         arr = list.stream().mapToInt(Integer::intValue).toArray();
         System.out.println("before:" + Arrays.toString(arr) + "\t\tafter:" + Arrays.toString(heapSort(arr)));
+
+        Collections.shuffle(list);
+        arr = list.stream().mapToInt(Integer::intValue).toArray();
+        System.out.println("before:" + Arrays.toString(arr) + "\t\tafter:" + Arrays.toString(countingSort(arr)));
     }
 
 }
