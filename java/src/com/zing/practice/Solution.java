@@ -1,6 +1,8 @@
 package com.zing.practice;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Stack;
 
 /**
@@ -322,6 +324,333 @@ public class Solution {
             head = next;
         }
         return pre;
+    }
+
+    public ListNode Merge(ListNode list1, ListNode list2) {
+        ListNode node = new ListNode(0);
+
+        ListNode cur = node;
+        while (list1 != null && list2 != null) {
+            if (list1.val <= list2.val) {
+                cur.next = list1;
+                list1 = list1.next;
+            } else {
+                cur.next = list2;
+                list2 = list2.next;
+            }
+            cur = cur.next;
+        }
+        if (list1 != null) {
+            cur.next = list1;
+        } else {
+            cur.next = list2;
+        }
+        return node.next;
+    }
+
+    public ListNode Merge2(ListNode list1, ListNode list2) {
+        if (list1 == null) {
+            return list2;
+        }
+        if (list2 == null) {
+            return list1;
+        }
+
+        if (list1.val <= list2.val) {
+            list1.next = Merge2(list1.next, list2);
+            return list1;
+        } else {
+            list2.next = Merge2(list1, list2.next);
+            return list2;
+        }
+    }
+
+    public boolean HasSubtree(TreeNode root1, TreeNode root2) {
+        if (root1 != null && root2 != null) {
+            return isSubtree(root1, root2) || HasSubtree(root1.left, root2) || HasSubtree(root1.right, root2);
+        }
+        return false;
+    }
+
+    public boolean isSubtree(TreeNode root1, TreeNode root2) {
+        if (root2 == null) {
+            return true;
+        }
+        if (root1 == null) {
+            return false;
+        }
+        if (root1.val == root2.val) {
+            return isSubtree(root1.left, root2.left) && isSubtree(root1.right, root2.right);
+        } else {
+            return false;
+        }
+    }
+
+    public void Mirror(TreeNode root) {
+        if (root != null) {
+            TreeNode tmp = root.left;
+            root.left = root.right;
+            root.right = tmp;
+
+            Mirror(root.left);
+            Mirror(root.right);
+        }
+    }
+
+    public void Mirror2(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(root);
+
+        while (!stack.empty()) {
+            TreeNode node = stack.pop();
+            TreeNode tmp = node.left;
+            node.left = node.right;
+            node.right = tmp;
+
+            if (node.left != null) {
+                stack.push(node.left);
+            }
+            if (node.right != null) {
+                stack.push(node.right);
+            }
+        }
+    }
+
+    public ArrayList<Integer> printMatrix(int[][] matrix) {
+        ArrayList<Integer> res = new ArrayList<>();
+        int row = matrix.length;
+        if (row == 0) {
+            return res;
+        }
+        int col = matrix[0].length;
+        int circle = (Math.min(row, col) + 1) / 2;
+        for (int i = 0; i < circle; i++) {
+            for (int j = i; j < col - i; j++) {
+                res.add(matrix[i][j]);
+            }
+            for (int j = i + 1; j < row - i; j++) {
+                res.add(matrix[j][col - i - 1]);
+            }
+            for (int j = col - i - 2; j >= i && row - i - 1 != i; j--) {
+                res.add(matrix[row - i - 1][j]);
+            }
+            for (int j = row - i - 2; j > i && col - i - 1 != i; j--) {
+                res.add(matrix[j][i]);
+            }
+        }
+        return res;
+    }
+
+    public ArrayList<Integer> printMatrix2(int[][] matrix) {
+        ArrayList<Integer> res = new ArrayList<>();
+        int row = matrix.length;
+        if (row == 0) {
+            return res;
+        }
+        int col = matrix[0].length;
+        if (col == 0) {
+            return res;
+        }
+
+        int left = 0, top = 0, right = col - 1, bottom = row - 1;
+        while (left <= right && top <= bottom) {
+            for (int i = left; i <= right; i++) {
+                res.add(matrix[top][i]);
+            }
+            for (int i = top + 1; i <= bottom; i++) {
+                res.add(matrix[i][right]);
+            }
+            if (top != bottom) {
+                for (int i = right - 1; i >= left; i--) {
+                    res.add(matrix[bottom][i]);
+                }
+            }
+            if (left != right) {
+                for (int i = bottom - 1; i > top; i--) {
+                    res.add(matrix[i][left]);
+                }
+            }
+            left++;
+            top++;
+            right--;
+            bottom--;
+        }
+        return res;
+    }
+
+    public static class Min {
+
+        private Stack<Integer> stack = new Stack<>();
+        private Stack<Integer> mstack = new Stack<>();
+
+        public void push(int node) {
+            stack.push(node);
+            if (mstack.empty() || node <= mstack.peek()) {
+                mstack.push(node);
+            }
+        }
+
+        public void pop() {
+            if (stack.peek().equals(mstack.peek())) {
+                mstack.pop();
+            }
+            stack.pop();
+        }
+
+        public int top() {
+            return stack.peek();
+        }
+
+        public int min() {
+            return mstack.peek();
+        }
+    }
+
+    public boolean IsPopOrder(int[] pushA, int[] popA) {
+        if (pushA.length == 0) {
+            return false;
+        }
+        Stack<Integer> stack = new Stack<>();
+        for (int i = 0, j = 0; i < pushA.length; i++) {
+            stack.push(pushA[i]);
+            while (!stack.empty() && stack.peek() == popA[j]) {
+                stack.pop();
+                j++;
+            }
+        }
+        return stack.empty();
+    }
+
+    public ArrayList<Integer> PrintFromTopToBottom(TreeNode root) {
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        PrintFromTopToBottom(root, res, 0);
+        ArrayList<Integer> r = new ArrayList<>();
+        for (ArrayList<Integer> re : res) {
+            r.addAll(re);
+        }
+        return r;
+    }
+
+    private void PrintFromTopToBottom(TreeNode node, ArrayList<ArrayList<Integer>> res, int level) {
+        if (node != null) {
+            if (res.size() == level) {
+                res.add(new ArrayList<>());
+            }
+            res.get(level).add(node.val);
+            PrintFromTopToBottom(node.left, res, level + 1);
+            PrintFromTopToBottom(node.right, res, level + 1);
+        }
+    }
+
+    public ArrayList<Integer> PrintFromTopToBottom2(TreeNode root) {
+        ArrayList<Integer> res = new ArrayList<>();
+
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            for (int i = 0; i < size; i++) {
+                TreeNode node = queue.poll();
+                if (node != null) {
+                    res.add(node.val);
+
+                    if (node.left != null) {
+                        queue.add(node.left);
+                    }
+                    if (node.right != null) {
+                        queue.add(node.right);
+                    }
+                }
+            }
+        }
+
+        return res;
+    }
+
+    public boolean VerifySquenceOfBST(int[] sequence) {
+        if (sequence.length == 0) {
+            return false;
+        }
+        return VerifySquenceOfBST(sequence, 0, sequence.length - 1);
+    }
+
+    private boolean VerifySquenceOfBST(int[] sequence, int start, int end) {
+        if (start >= end) {
+            return true;
+        }
+
+        int val = sequence[end];
+        int idx = start;
+
+        while (idx < end && sequence[idx] < val) {
+            idx++;
+        }
+
+        for (int i = idx + 1; i < end; i++) {
+            if (sequence[i] < val) {
+                return false;
+            }
+        }
+
+        return VerifySquenceOfBST(sequence, start, idx - 1) && VerifySquenceOfBST(sequence, idx, end - 1);
+    }
+
+    public ArrayList<ArrayList<Integer>> FindPath(TreeNode root, int target) {
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        LinkedList<Integer> track = new LinkedList<>();
+        FindPath(root, target, res, track);
+        return res;
+    }
+
+    private void FindPath(TreeNode node, int target, ArrayList<ArrayList<Integer>> res, LinkedList<Integer> track) {
+        if (node == null) {
+            return;
+        }
+
+        track.add(node.val);
+        if (node.left == null && node.right == null && target == node.val) {
+            res.add(new ArrayList<>(track));
+        } else {
+            FindPath(node.left, target - node.val, res, track);
+            FindPath(node.right, target - node.val, res, track);
+        }
+        track.removeLast();
+    }
+
+    public RandomListNode Clone(RandomListNode pHead) {
+        RandomListNode cur = pHead;
+        while (cur != null) {
+            RandomListNode next = cur.next;
+            cur.next = new RandomListNode(cur.label);
+            cur.next.next = next;
+            cur = next;
+        }
+
+        cur = pHead;
+        while (cur != null) {
+            if (cur.random != null) {
+                cur.next.random = cur.random.next;
+            }
+            cur = cur.next.next;
+        }
+
+        cur = pHead;
+        RandomListNode newHead = new RandomListNode(0);
+        RandomListNode newCur = newHead;
+        while (cur != null) {
+            RandomListNode next = cur.next.next;
+
+            newCur.next = cur.next;
+            cur.next = next;
+
+            cur = cur.next;
+            newCur = newCur.next;
+        }
+        return newHead.next;
     }
 
     public static void main(String[] args) {
