@@ -1,9 +1,6 @@
 package com.zing.practice;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * @author Zing
@@ -651,6 +648,316 @@ public class Solution {
             newCur = newCur.next;
         }
         return newHead.next;
+    }
+
+    private TreeNode pre = null;
+
+    public TreeNode Convert(TreeNode root) {
+        if (root == null) {
+            return null;
+        }
+
+        TreeNode head = Convert(root.left);
+        if (head == null) {
+            head = root;
+        }
+
+        root.left = pre;
+        if (pre != null) {
+            pre.right = root;
+        }
+        pre = root;
+
+        Convert(root.right);
+
+        return head;
+    }
+
+    public ArrayList<String> Permutation(String str) {
+        ArrayList<String> res = new ArrayList<>();
+        if (str.length() == 0) {
+            return res;
+        }
+        backtrack(str.toCharArray(), 0, res);
+        Collections.sort(res);
+        return new ArrayList<>(res);
+    }
+
+    private void backtrack(char[] chars, int i, ArrayList<String> res) {
+        if (i == chars.length - 1) {
+            String val = String.valueOf(chars);
+            if (!res.contains(val)) {
+                res.add(val);
+            }
+        } else {
+            for (int j = i; j < chars.length; j++) {
+                swap(chars, i, j);
+                backtrack(chars, i + 1, res);
+                swap(chars, i, j);
+            }
+        }
+    }
+
+    private void swap(char[] cs, int i, int j) {
+        char temp = cs[i];
+        cs[i] = cs[j];
+        cs[j] = temp;
+    }
+
+    public int MoreThanHalfNum(int[] array) {
+        if (array.length == 0) {
+            return 0;
+        }
+
+        int result = array[0];
+        int cnt = 1;
+        for (int i = 1; i < array.length; i++) {
+            if (cnt == 0) {
+                result = array[i];
+                cnt = 1;
+            } else if (result == array[i]) {
+                cnt++;
+            } else {
+                cnt--;
+            }
+        }
+
+        cnt = 0;
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == result) {
+                cnt++;
+            }
+        }
+        return (cnt > array.length / 2) ? result : 0;
+    }
+
+    public ArrayList<Integer> GetLeastNumbers(int[] input, int k) {
+        ArrayList<Integer> res = new ArrayList<>();
+        if (input == null || input.length <= 0 || input.length < k) {
+            return res;
+        }
+
+        for (int i = input.length / 2 + 1; i >= 0; i--) {
+            adjustHeap(input, i, input.length);
+        }
+        for (int i = input.length - 1; i >= 0; i--) {
+            int tmp = input[0];
+            input[0] = input[i];
+            input[i] = tmp;
+
+            adjustHeap(input, 0, i);
+        }
+
+        for (int i = 0; i < k; i++) {
+            res.add(input[i]);
+        }
+        return res;
+    }
+
+    private void adjustHeap(int[] arr, int start, int end) {
+        int tmp = arr[start];
+        for (int k = 2 * start + 1; k < end; k = 2 * k + 1) {
+            if (k + 1 < end && arr[k] < arr[k + 1]) {
+                k++;
+            }
+            if (arr[k] > tmp) {
+                arr[start] = arr[k];
+                start = k;
+            } else {
+                break;
+            }
+        }
+        arr[start] = tmp;
+    }
+
+    public int FindGreatestSumOfSubArray(int[] array) {
+        int res = array[0];
+        int max = array[0];
+        for (int i = 1; i < array.length; i++) {
+            max = Math.max(array[i] + max, array[i]);
+            res = Math.max(res, max);
+        }
+        return res;
+    }
+
+    public int NumberOf1Between1AndN(int n) {
+        int res = 0;
+        for (int i = 1; i <= n; i++) {
+            int tmp = i;
+            while (tmp != 0) {
+                if (tmp % 10 == 1) {
+                    res++;
+                }
+                tmp = tmp / 10;
+            }
+        }
+        return res;
+    }
+
+    public String PrintMinNumber(int[] numbers) {
+        if (numbers == null || numbers.length == 0) {
+            return "";
+        }
+        int len = numbers.length;
+        String[] strs = new String[len];
+        for (int i = 0; i < len; i++) {
+            strs[i] = String.valueOf(numbers[i]);
+        }
+        Arrays.sort(strs, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                String c1 = o1 + o2;
+                String c2 = o2 + o1;
+                return c1.compareTo(c2);
+            }
+        });
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < len; i++) {
+            sb.append(strs[i]);
+        }
+        return sb.toString();
+    }
+
+    public int GetUglyNumber(int index) {
+        if (index < 7) {
+            return index;
+        }
+        int p2 = 0, p3 = 0, p5 = 0, num = 1;
+        List<Integer> arr = new ArrayList<>();
+        arr.add(num);
+        while (arr.size() < index) {
+            num = Math.min(arr.get(p2) * 2, Math.min(arr.get(p3) * 3, arr.get(p5) * 5));
+            if (arr.get(p2) * 2 == num) {
+                p2++;
+            }
+            if (arr.get(p3) * 3 == num) {
+                p3++;
+            }
+            if (arr.get(p5) * 5 == num) {
+                p5++;
+            }
+            arr.add(num);
+        }
+        return num;
+    }
+
+    public int FirstNotRepeatingChar(String str) {
+        Map<Character, Integer> map = new HashMap<>();
+        for (int i = 0; i < str.length(); i++) {
+            char key = str.charAt(i);
+            if (map.containsKey(key)) {
+                map.put(key, map.get(key) + 1);
+            } else {
+                map.put(key, 1);
+            }
+        }
+        for (int i = 0; i < str.length(); i++) {
+            if (map.get(str.charAt(i)) == 1) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public int FirstNotRepeatingChar2(String str) {
+        int[] words = new int[58];
+        for (int i = 0; i < str.length(); i++) {
+            words[((int) str.charAt(i)) - 65]++;
+        }
+        for (int i = 0; i < str.length(); i++) {
+            if (words[((int) str.charAt(i)) - 65] == 1) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public int InversePairs(int[] array) {
+        int[] tmp = new int[array.length];
+        return InversePairs(array, tmp, 0, array.length - 1);
+    }
+
+    private int InversePairs(int[] arr, int[] tmp, int lo, int hi) {
+        if (lo >= hi) {
+            return 0;
+        }
+        int mid = (lo + hi) >>> 1;
+        int leftCount = InversePairs(arr, tmp, lo, mid) % 1000000007;
+        int rightCount = InversePairs(arr, tmp, mid + 1, hi) % 1000000007;
+
+        int cnt = 0;
+
+        int i = lo, j = mid + 1, k = 0;
+        while (i <= mid && j <= hi) {
+            if (arr[i] <= arr[j]) {
+                tmp[k++] = arr[i++];
+            } else {
+                cnt += mid - i + 1;
+                if (cnt >= 1000000007) {
+                    cnt = cnt % 1000000007;
+                }
+                tmp[k++] = arr[j++];
+            }
+        }
+        while (i <= mid) {
+            tmp[k++] = arr[i++];
+        }
+        while (j <= hi) {
+            tmp[k++] = arr[j++];
+        }
+        for (int m = lo; m <= hi; m++) {
+            arr[m] = tmp[m - lo];
+        }
+
+        return (cnt + leftCount + rightCount) % 1000000007;
+    }
+
+    private int InversePairs2(int[] arr, int[] tmp, int lo, int hi) {
+        if (lo >= hi) {
+            return 0;
+        }
+        int mid = (lo + hi) >>> 1;
+        int leftCount = InversePairs2(arr, tmp, lo, mid) % 1000000007;
+        int rightCount = InversePairs2(arr, tmp, mid + 1, hi) % 1000000007;
+
+        int cnt = 0;
+
+        int i = mid, j = hi, k = hi;
+        while (i >= lo && j >= mid + 1) {
+            if (arr[i] <= arr[j]) {
+                tmp[k--] = arr[j--];
+            } else {
+                cnt += j - mid;
+                if (cnt >= 1000000007) {
+                    cnt = cnt % 1000000007;
+                }
+                tmp[k--] = arr[i--];
+            }
+        }
+        while (i >= lo) {
+            tmp[k--] = arr[i--];
+        }
+        while (j >= mid + 1) {
+            tmp[k--] = arr[j--];
+        }
+        for (int m = lo; m <= hi; m++) {
+            arr[m] = tmp[m];
+        }
+        return (cnt + leftCount + rightCount) % 1000000007;
+    }
+
+    public ListNode FindFirstCommonNode(ListNode pHead1, ListNode pHead2) {
+        if (pHead1 == null || pHead2 == null) {
+            return null;
+        }
+
+        ListNode cur1 = pHead1;
+        ListNode cur2 = pHead2;
+        while (cur1 != cur2) {
+            cur1 = cur1 != null ? cur1.next : pHead2;
+            cur2 = cur2 != null ? cur2.next : pHead1;
+        }
+        return cur1;
     }
 
     public static void main(String[] args) {
