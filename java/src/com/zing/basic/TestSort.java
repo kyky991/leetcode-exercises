@@ -247,36 +247,155 @@ public class TestSort {
         arr[start] = tmp;
     }
 
+    /**
+     * 最佳情况：T(n) = O(n+k)  最差情况：T(n) = O(n+k)  平均情况：T(n) = O(n+k)  稳定
+     */
+    public static int[] countingSort(int[] arr) {
+        int min = arr[0];
+        int max = arr[0];
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] < min) {
+                min = arr[i];
+            }
+            if (arr[i] > max) {
+                max = arr[i];
+            }
+        }
+        int[] bucket = new int[max - min + 1];
+        for (int i = 0; i < arr.length; i++) {
+            bucket[arr[i] - min]++;
+        }
+
+        int index = 0;
+        for (int i = 0; i < bucket.length; i++) {
+            while (bucket[i] > 0) {
+                arr[index++] = i + min;
+                bucket[i]--;
+            }
+        }
+        return arr;
+    }
+
+    /**
+     * 最佳情况：T(n) = O(n+k)  最差情况：T(n) = O(n^2)  平均情况：T(n) = O(n+k)  稳定
+     */
+    public static int[] bucketSort(int[] arr) {
+        return bucketSort(arr, 5);
+    }
+
+    public static int[] bucketSort(int[] arr, int bucketSize) {
+        int min = arr[0];
+        int max = arr[0];
+        for (int value : arr) {
+            if (value < min) {
+                min = value;
+            } else if (value > max) {
+                max = value;
+            }
+        }
+
+        int bucketCount = (max - min) / bucketSize + 1;
+        int[][] buckets = new int[bucketCount][0];
+
+        for (int i = 0; i < arr.length; i++) {
+            int index = (arr[i] - min) / bucketSize;
+            int[] b = Arrays.copyOf(buckets[index], buckets[index].length + 1);
+            b[b.length - 1] = arr[i];
+            buckets[index] = b;
+        }
+
+        int idx = 0;
+        for (int[] bucket : buckets) {
+            if (bucket.length <= 0) {
+                continue;
+            }
+
+            insertSort(bucket);
+
+            for (int b : bucket) {
+                arr[idx++] = b;
+            }
+        }
+
+        return arr;
+    }
+
+    /**
+     * 最佳情况：T(n) = O(n * k)   最差情况：T(n) = O(n * k)   平均情况：T(n) = O(n * k)  稳定
+     */
+    public static int[] radixSort(int[] arr) {
+        int max = arr[0];
+        for (int value : arr) {
+            max = Math.max(max, value);
+        }
+        int len = 0;
+        while (max != 0) {
+            len++;
+            max = max / 10;
+        }
+
+        int mod = 10, div = 1;
+        for (int i = 0; i < len; i++, div = 10 * div, mod = 10 * mod) {
+            int[][] counter = new int[mod * 2][0];
+            for (int j = 0; j < arr.length; j++) {
+                int bucket = ((arr[j] % mod) / div) + mod;
+                int[] b = Arrays.copyOf(counter[bucket], counter[bucket].length + 1);
+                b[b.length - 1] = arr[j];
+                counter[bucket] = b;
+            }
+
+            int pos = 0;
+            for (int[] bucket : counter) {
+                for (int b : bucket) {
+                    arr[pos++] = b;
+                }
+            }
+        }
+        return arr;
+    }
+
     public static void main(String[] args) {
         List<Integer> list = Arrays.asList(2, 5, 4, 1, 9, 5, 4, 3);
 
         Collections.shuffle(list);
         int[] arr = list.stream().mapToInt(Integer::intValue).toArray();
-        System.out.println("before:" + Arrays.toString(arr) + "\t\tafter:" + Arrays.toString(bubbleSort(arr)));
+        System.out.println("bubbleSort" + "\t\tbefore:" + Arrays.toString(arr) + "\t\tafter:" + Arrays.toString(bubbleSort(arr)));
 
         Collections.shuffle(list);
         arr = list.stream().mapToInt(Integer::intValue).toArray();
-        System.out.println("before:" + Arrays.toString(arr) + "\t\tafter:" + Arrays.toString(selectionSort(arr)));
+        System.out.println("selectionSort" + "\t\tbefore:" + Arrays.toString(arr) + "\t\tafter:" + Arrays.toString(selectionSort(arr)));
 
         Collections.shuffle(list);
         arr = list.stream().mapToInt(Integer::intValue).toArray();
-        System.out.println("before:" + Arrays.toString(arr) + "\t\tafter:" + Arrays.toString(insertSort(arr)));
+        System.out.println("insertSort" + "\t\tbefore:" + Arrays.toString(arr) + "\t\tafter:" + Arrays.toString(insertSort(arr)));
 
         Collections.shuffle(list);
         arr = list.stream().mapToInt(Integer::intValue).toArray();
-        System.out.println("before:" + Arrays.toString(arr) + "\t\tafter:" + Arrays.toString(shellSort(arr)));
+        System.out.println("shellSort" + "\t\tbefore:" + Arrays.toString(arr) + "\t\tafter:" + Arrays.toString(shellSort(arr)));
 
         Collections.shuffle(list);
         arr = list.stream().mapToInt(Integer::intValue).toArray();
-        System.out.println("before:" + Arrays.toString(arr) + "\t\tafter:" + Arrays.toString(mergeSort(arr)));
+        System.out.println("mergeSort" + "\t\tbefore:" + Arrays.toString(arr) + "\t\tafter:" + Arrays.toString(mergeSort(arr)));
 
         Collections.shuffle(list);
         arr = list.stream().mapToInt(Integer::intValue).toArray();
-        System.out.println("before:" + Arrays.toString(arr) + "\t\tafter:" + Arrays.toString(quickSort(arr)));
+        System.out.println("quickSort" + "\t\tbefore:" + Arrays.toString(arr) + "\t\tafter:" + Arrays.toString(quickSort(arr)));
 
         Collections.shuffle(list);
         arr = list.stream().mapToInt(Integer::intValue).toArray();
-        System.out.println("before:" + Arrays.toString(arr) + "\t\tafter:" + Arrays.toString(heapSort(arr)));
+        System.out.println("heapSort" + "\t\tbefore:" + Arrays.toString(arr) + "\t\tafter:" + Arrays.toString(heapSort(arr)));
+
+        Collections.shuffle(list);
+        arr = list.stream().mapToInt(Integer::intValue).toArray();
+        System.out.println("countingSort" + "\t\tbefore:" + Arrays.toString(arr) + "\t\tafter:" + Arrays.toString(countingSort(arr)));
+
+        Collections.shuffle(list);
+        arr = list.stream().mapToInt(Integer::intValue).toArray();
+        System.out.println("bucketSort" + "\t\tbefore:" + Arrays.toString(arr) + "\t\tafter:" + Arrays.toString(bucketSort(arr)));
+
+        Collections.shuffle(list);
+        arr = list.stream().mapToInt(Integer::intValue).toArray();
+        System.out.println("radixSort" + "\t\tbefore:" + Arrays.toString(arr) + "\t\tafter:" + Arrays.toString(radixSort(arr)));
     }
 
 }
