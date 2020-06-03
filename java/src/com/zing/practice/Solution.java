@@ -960,6 +960,297 @@ public class Solution {
         return cur1;
     }
 
+    public int GetNumberOfK(int[] array, int k) {
+        if (array.length == 0) {
+            return 0;
+        }
+        int max = array[0];
+        int min = array[0];
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] > max) {
+                max = array[i];
+            }
+            if (array[i] < min) {
+                min = array[i];
+            }
+        }
+        int[] bucket = new int[max - min + 1];
+        for (int i = 0; i < array.length; i++) {
+            bucket[array[i] - min]++;
+        }
+        if (k - min < 0 || k - min >= bucket.length) {
+            return 0;
+        }
+        return bucket[k - min];
+    }
+
+    public int GetNumberOfK2(int[] array, int k) {
+        int left = 0, right = array.length;
+        while (left < right) {
+            int mid = (left + right) >>> 1;
+            if (array[mid] < k) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        int first = left;
+
+        left = 0;
+        right = array.length;
+        while (left < right) {
+            int mid = (left + right) >>> 1;
+            if (array[mid] > k) {
+                right = mid;
+            } else {
+                left = mid + 1;
+            }
+        }
+        int last = right - 1;
+        return last - first + 1;
+    }
+
+    public int TreeDepth(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        return Math.max(TreeDepth(root.left), TreeDepth(root.right)) + 1;
+    }
+
+    public boolean IsBalanced(TreeNode root) {
+        if (root == null) {
+            return true;
+        }
+        int offset = Math.abs(TreeDepth(root.left) - TreeDepth(root.right));
+        return offset <= 1 && IsBalanced(root.left) && IsBalanced(root.right);
+    }
+
+    public boolean IsBalanced2(TreeNode root) {
+        return getDepth(root) != -1;
+    }
+
+    private int getDepth(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        int left = getDepth(root.left);
+        if (left == -1) {
+            return -1;
+        }
+        int right = getDepth(root.right);
+        if (right == -1) {
+            return -1;
+        }
+        return Math.abs(left - right) > 1 ? -1 : 1 + Math.max(left, right);
+    }
+
+    public void FindNumsAppearOnce(int[] array, int num1[], int num2[]) {
+        if (array.length == 2) {
+            num1[0] = array[0];
+            num2[0] = array[1];
+            return;
+        }
+        int res = 0;
+        for (int i = 0; i < array.length; i++) {
+            res = res ^ array[i];
+        }
+        int index = 0;
+        while (res != 0 && index < 32) {
+            if ((res & 1) == 1) {
+                break;
+            }
+            res = res >> 1;
+            index++;
+        }
+
+        for (int i = 0; i < array.length; i++) {
+            if (bit1(array[i], index)) {
+                num1[0] ^= array[i];
+            } else {
+                num2[0] ^= array[i];
+            }
+        }
+    }
+
+    private boolean bit1(int val, int index) {
+        return ((val >> index) & 1) == 1;
+    }
+
+    public ArrayList<ArrayList<Integer>> FindContinuousSequence(int sum) {
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        for (int i = (int) Math.sqrt(2 * sum); i >= 2; i--) {
+            if ((i & 1) == 1 && sum % i == 0 || (sum % i) * 2 == i) {
+                ArrayList<Integer> list = new ArrayList<>();
+                for (int j = 0, k = (sum / i) - (i - 1) / 2; j < i; j++, k++) {
+                    list.add(k);
+                }
+                res.add(list);
+            }
+        }
+        return res;
+    }
+
+    public ArrayList<ArrayList<Integer>> FindContinuousSequence2(int sum) {
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        int lo = 1, hi = 2;
+        while (lo < hi) {
+            int cur = (lo + hi) * (hi - lo + 1) / 2;
+            if (cur == sum) {
+                ArrayList<Integer> list = new ArrayList<>();
+                for (int i = lo; i <= hi; i++) {
+                    list.add(i);
+                }
+                res.add(list);
+                lo++;
+            } else if (cur < sum) {
+                hi++;
+            } else {
+                lo++;
+            }
+        }
+        return res;
+    }
+
+    public ArrayList<Integer> FindNumbersWithSum(int[] array, int sum) {
+        int min = Integer.MAX_VALUE;
+        ArrayList<Integer> res = new ArrayList<>();
+        for (int i = 0; i < array.length; i++) {
+            int val = array[i];
+            int j = i;
+            int left = i + 1, right = array.length - 1;
+            while (left <= right) {
+                int mid = (left + right) >>> 1;
+                int target = sum - val;
+                if (array[mid] == target) {
+                    j = mid;
+                    break;
+                } else if (array[mid] < target) {
+                    left = mid + 1;
+                } else {
+                    right = mid - 1;
+                }
+            }
+            int mul = array[i] * array[j];
+            if (i != j && mul < min) {
+                res = new ArrayList<>();
+                res.add(array[i]);
+                res.add(array[j]);
+                min = mul;
+            }
+        }
+        return res;
+    }
+
+    public ArrayList<Integer> FindNumbersWithSum2(int[] array, int sum) {
+        ArrayList<Integer> res = new ArrayList<>();
+
+        int i = 0, j = array.length - 1;
+        while (i < j) {
+            if (array[i] + array[j] == sum) {
+                res.add(array[i]);
+                res.add(array[j]);
+                return res;
+            } else if (array[i] + array[j] > sum) {
+                j--;
+            } else {
+                i++;
+            }
+        }
+
+        return res;
+    }
+
+    public String LeftRotateString(String str, int n) {
+        if (str.length() == 0) {
+            return str;
+        }
+        StringBuilder sb = new StringBuilder(str);
+        n = n % str.length();
+        for (int i = 0; i < n; i++) {
+            char c = sb.charAt(0);
+            for (int j = 1; j < sb.length(); j++) {
+                sb.setCharAt(j - 1, sb.charAt(j));
+            }
+            sb.setCharAt(sb.length() - 1, c);
+        }
+        return sb.toString();
+    }
+
+    public String LeftRotateString2(String str, int n) {
+        int len = str.length();
+        if (len == 0) {
+            return str;
+        }
+        n = n % len;
+        str += str;
+        return str.substring(n, len + n);
+    }
+
+    public String LeftRotateString3(String str, int n) {
+        int len = str.length();
+        if (len == 0) {
+            return str;
+        }
+        n = n % len;
+        char[] chars = str.toCharArray();
+        reverse(chars, 0, chars.length - 1);
+        reverse(chars, 0, chars.length - 1 - n);
+        reverse(chars, chars.length - n, chars.length - 1);
+        return String.valueOf(chars);
+    }
+
+    private void reverse(char[] chars, int start, int end) {
+        while (start < end) {
+            char tmp = chars[start];
+            chars[start] = chars[end];
+            chars[end] = tmp;
+            start++;
+            end--;
+        }
+    }
+
+    public String ReverseSentence(String str) {
+        String tmp = "";
+        StringBuilder res = new StringBuilder();
+        for (int i = str.length() - 1; i >= 0; i--) {
+            char c = str.charAt(i);
+            if (c == ' ') {
+                res.append(tmp);
+                res.append(c);
+                tmp = "";
+            } else {
+                tmp = c + tmp;
+            }
+        }
+        res.append(tmp);
+        return res.toString();
+    }
+
+    public boolean isContinuous(int[] numbers) {
+        if (numbers.length == 0) {
+            return false;
+        }
+        int min = 14, max = -1;
+        int[] d = new int[14];
+        //d[0] = -5;
+        for (int i = 0; i < numbers.length; i++) {
+            d[numbers[i]]++;
+            if (numbers[i] == 0) {
+                continue;
+            }
+            if (d[numbers[i]] > 1) {
+                return false;
+            }
+            if (numbers[i] > max) {
+                max = numbers[i];
+            }
+            if (numbers[i] < min) {
+                min = numbers[i];
+            }
+        }
+        return max - min < 5;
+    }
+
     public static void main(String[] args) {
         Solution s = new Solution();
         System.out.println(Integer.MIN_VALUE & (Integer.MIN_VALUE - 1));
