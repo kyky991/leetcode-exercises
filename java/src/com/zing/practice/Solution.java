@@ -1251,9 +1251,50 @@ public class Solution {
         return max - min < 5;
     }
 
+    public int LastRemaining(int n, int m) {
+        if (n < 1 || m < 1) {
+            return -1;
+        }
+
+        int[] arr = new int[n];
+        int i = -1, step = 0, count = n;
+        while (count > 0) {
+            i++;
+            if (i >= n) {
+                i = 0;
+            }
+            if (arr[i] == -1) {
+                continue;
+            }
+            step++;
+            if (step == m) {
+                arr[i] = -1;
+                step = 0;
+                count--;
+            }
+        }
+        return i;
+    }
+
+    public int Sum(int n) {
+        int i = n;
+        boolean f = (i > 0) && ((i += Sum(n - 1)) > 0);
+        return i;
+    }
+
+    public int Add(int num1, int num2) {
+        while (num2 != 0) {
+            int tmp = num1 ^ num2;
+            num2 = (num1 & num2) << 1;
+            num1 = tmp;
+        }
+        return num1;
+    }
+
     public static void main(String[] args) {
         Solution s = new Solution();
         System.out.println(Integer.MIN_VALUE & (Integer.MIN_VALUE - 1));
         System.out.println(s.NumberOf1(Integer.MIN_VALUE));
+        System.out.println(s.Sum(5));
     }
 }
