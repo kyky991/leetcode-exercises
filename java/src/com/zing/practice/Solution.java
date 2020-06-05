@@ -1291,10 +1291,109 @@ public class Solution {
         return num1;
     }
 
+    public int StrToInt(String str) {
+        if (str.length() == 0) {
+            return 0;
+        }
+
+        int res = 0;
+        boolean negative = false;
+        char[] chars = str.toCharArray();
+        int limit = -Integer.MAX_VALUE;
+        int multmin;
+
+        int i = 0;
+        int n = chars.length;
+        if (n > 0) {
+            char a = chars[0];
+            if (a < '0') {
+                if (a == '-') {
+                    negative = true;
+                    limit = Integer.MIN_VALUE;
+                } else if (a != '+') {
+                    return 0;
+                }
+                if (n == 1) {
+                    return 0;
+                }
+                i++;
+            }
+
+            // limit 一直是负数
+            multmin = limit / 10;
+            while (i < n) {
+                int d = chars[i++] - '0';
+                if (d < 0 || d > 9) {
+                    return 0;
+                }
+                if (res < multmin) {
+                    return 0;
+                }
+                res *= 10;
+                if (res < limit + d) {
+                    return 0;
+                }
+                res -= d;
+            }
+        } else {
+            return 0;
+        }
+        return negative ? res : -res;
+    }
+
+    public boolean duplicate(int numbers[], int length, int[] duplication) {
+        for (int i = 0; i < length; i++) {
+            int index = numbers[i];
+            if (index >= length) {
+                index -= length;
+            }
+            if (numbers[index] >= length) {
+                duplication[0] = index;
+                return true;
+            }
+
+            numbers[index] += length;
+        }
+        return false;
+    }
+
+    public boolean duplicate2(int numbers[], int length, int[] duplication) {
+        boolean[] b = new boolean[length];
+        for (int i = 0; i < length; i++) {
+            if (b[numbers[i]]) {
+                duplication[0] = numbers[i];
+                return true;
+            }
+            b[numbers[i]] = true;
+        }
+        return false;
+    }
+
+    public int[] multiply(int[] A) {
+        int len = A.length;
+        int[] B = new int[len];
+        if (len != 0) {
+            B[0] = 1;
+            for (int i = 1; i < len; i++) {
+                B[i] = B[i - 1] * A[i - 1];
+            }
+            int tmp = 1;
+            for (int i = len - 2; i >= 0; i--) {
+                tmp *= A[i + 1];
+                B[i] *= tmp;
+            }
+        }
+        return B;
+    }
+
     public static void main(String[] args) {
         Solution s = new Solution();
         System.out.println(Integer.MIN_VALUE & (Integer.MIN_VALUE - 1));
         System.out.println(s.NumberOf1(Integer.MIN_VALUE));
         System.out.println(s.Sum(5));
+        System.out.println(s.StrToInt("-156a156"));
+
+        char c = '1';
+        System.out.println((int) c);
     }
 }
