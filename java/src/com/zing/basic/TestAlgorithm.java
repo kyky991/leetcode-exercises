@@ -275,6 +275,156 @@ public class TestAlgorithm {
         return -1;
     }
 
+    String minWindow(String s, String t) {
+        Map<Character, Integer> need = new HashMap<>();
+        Map<Character, Integer> window = new HashMap<>();
+        for (int i = 0; i < t.length(); i++) {
+            char c = t.charAt(i);
+            need.put(c, need.getOrDefault(c, 0) + 1);
+        }
+
+        int left = 0, right = 0;
+        int valid = 0;
+        int start = 0, len = Integer.MAX_VALUE;
+
+        while (right < s.length()) {
+            char c = s.charAt(right);
+            right++;
+            if (need.containsKey(c)) {
+                window.put(c, window.getOrDefault(c, 0) + 1);
+                if (window.get(c).equals(need.get(c))) {
+                    valid++;
+                }
+            }
+
+            System.out.println("left:" + left + " right:" + right);
+
+            while (valid == need.size()) {
+                if (right - left < len) {
+                    start = left;
+                    len = right - left;
+                }
+
+                char d = s.charAt(left);
+                left++;
+                if (need.containsKey(d)) {
+                    if (window.get(d).equals(need.get(d))) {
+                        valid--;
+                    }
+                    window.put(d, window.get(d) - 1);
+                }
+            }
+        }
+
+        return len == Integer.MAX_VALUE ? "" : s.substring(start, start + len);
+    }
+
+    boolean checkInclusion(String s, String t) {
+        Map<Character, Integer> need = new HashMap<>();
+        Map<Character, Integer> window = new HashMap<>();
+        for (int i = 0; i < t.length(); i++) {
+            char c = t.charAt(i);
+            need.put(c, need.getOrDefault(c, 0) + 1);
+        }
+
+        int left = 0, right = 0;
+        int valid = 0;
+
+        while (right < s.length()) {
+            char c = s.charAt(right);
+            right++;
+
+            if (need.containsKey(c)) {
+                window.put(c, window.getOrDefault(c, 0) + 1);
+                if (window.get(c).equals(need.get(c))) {
+                    valid++;
+                }
+            }
+
+            System.out.println("left:" + left + " right:" + right);
+
+            while (right - left >= t.length()) {
+                if (valid == need.size()) {
+                    return true;
+                }
+                char d = s.charAt(left);
+                left++;
+                if (need.containsKey(d)) {
+                    if (window.get(d).equals(need.get(d))) {
+                        valid--;
+                    }
+                    window.put(d, window.get(d) - 1);
+                }
+            }
+        }
+        return false;
+    }
+
+    List<Integer> findAnagrams(String s, String t) {
+        Map<Character, Integer> need = new HashMap<>();
+        Map<Character, Integer> window = new HashMap<>();
+        for (int i = 0; i < t.length(); i++) {
+            char c = t.charAt(i);
+            need.put(c, need.getOrDefault(c, 0) + 1);
+        }
+
+        int left = 0, right = 0;
+        int valid = 0;
+        List<Integer> res = new ArrayList<>();
+
+        while (right < s.length()) {
+            char c = s.charAt(right);
+            right++;
+            if (need.containsKey(c)) {
+                window.put(c, window.getOrDefault(c, 0) + 1);
+                if (window.get(c).equals(need.get(c))) {
+                    valid++;
+                }
+            }
+
+            while (right - left >= t.length()) {
+                if (valid == need.size()) {
+                    res.add(left);
+                }
+
+                char d = s.charAt(left);
+                left++;
+                if (need.containsKey(d)) {
+                    if (window.get(d).equals(need.get(d))) {
+                        valid--;
+                    }
+                    window.put(d, window.get(d) - 1);
+                }
+            }
+        }
+
+        return res;
+    }
+
+    int lengthOfLongestSubstring(String s) {
+        Map<Character, Integer> window = new HashMap<>();
+
+        int left = 0, right = 0;
+        int res = 0;
+
+        while (right < s.length()) {
+            char c = s.charAt(right);
+            right++;
+
+            window.put(c, window.getOrDefault(c, 0) + 1);
+
+            while (window.get(c) > 1) {
+                char d = s.charAt(left);
+                left++;
+
+                window.put(d, window.get(d) - 1);
+            }
+
+            res = Math.max(res, right - left);
+        }
+        return res;
+    }
+
     public static void main(String[] args) {
         TestAlgorithm algorithm = new TestAlgorithm();
         System.out.println(algorithm.fib(5));
@@ -283,6 +433,11 @@ public class TestAlgorithm {
         System.out.println(algorithm.coinChange(new int[]{1, 2, 5}, 11));
         System.out.println(algorithm.permute(new int[]{1, 2, 5}));
         System.out.println(algorithm.solveNQueens(4));
+        System.out.println(algorithm.minWindow("ADOBECODEBANC", "ABC"));
+        System.out.println(algorithm.checkInclusion("ADOBECODEBANC", "ED"));
+        System.out.println(algorithm.findAnagrams("ADODECODEBANC", "ED"));
+        System.out.println(algorithm.lengthOfLongestSubstring("abcabcbb"));
+        System.out.println(algorithm.lengthOfLongestSubstring("bbbbb"));
     }
 
 }
