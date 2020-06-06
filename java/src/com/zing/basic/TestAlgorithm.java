@@ -1,5 +1,7 @@
 package com.zing.basic;
 
+import com.zing.structure.TreeNode;
+
 import java.util.*;
 
 /**

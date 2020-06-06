@@ -1,6 +1,6 @@
-package com.zing.leetcode.explore.learn;
+package com.zing.structure;
 
-class Node {
+public class Node {
     public int val;
     public Node left;
     public Node right;

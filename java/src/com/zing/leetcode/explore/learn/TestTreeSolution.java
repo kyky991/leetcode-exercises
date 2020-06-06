@@ -1,5 +1,7 @@
 package com.zing.leetcode.explore.learn;
 
+import com.zing.structure.TreeNode;
+
 /**
  * @author Zing
  * @date 2020-05-16

@@ -1,5 +1,11 @@
 package com.zing.practice;
 
+import com.zing.leetcode.explore.learn.TreeSolution;
+import com.zing.structure.ListNode;
+import com.zing.structure.RandomListNode;
+import com.zing.structure.TreeLinkNode;
+import com.zing.structure.TreeNode;
+
 import java.util.*;
 
 /**
@@ -622,7 +628,7 @@ public class Solution {
         RandomListNode cur = pHead;
         while (cur != null) {
             RandomListNode next = cur.next;
-            cur.next = new RandomListNode(cur.label);
+            cur.next = new RandomListNode(cur.val);
             cur.next.next = next;
             cur = next;
         }
@@ -1386,12 +1392,534 @@ public class Solution {
         return B;
     }
 
+    public boolean match(char[] str, char[] pattern) {
+        if (str == null || pattern == null) {
+            return false;
+        }
+        return match(str, 0, pattern, 0);
+    }
+
+    private boolean match(char[] str, int strIndex, char[] pattern, int patternIndex) {
+        //有效性检验：str到尾，pattern到尾，匹配成功
+        if (strIndex == str.length && patternIndex == pattern.length) {
+            return true;
+        }
+        //pattern先到尾，匹配失败
+        if (strIndex != str.length && patternIndex == pattern.length) {
+            return false;
+        }
+        //模式第2个是*，且字符串第1个跟模式第1个匹配,分3种匹配模式；如不匹配，模式后移2位
+        if (patternIndex + 1 < pattern.length && pattern[patternIndex + 1] == '*') {
+            if (strIndex != str.length && (pattern[patternIndex] == str[strIndex] || pattern[patternIndex] == '.')) {
+                return match(str, strIndex, pattern, patternIndex + 2)//模式后移2，视为x*匹配0个字符
+                        || match(str, strIndex + 1, pattern, patternIndex + 2)//视为模式匹配1个字符
+                        || match(str, strIndex + 1, pattern, patternIndex);//*匹配1个，再匹配str中的下一个
+            } else {
+                return match(str, strIndex, pattern, patternIndex + 2);
+            }
+        }
+        //模式第2个不是*，且字符串第1个跟模式第1个匹配，则都后移1位，否则直接返回false
+        if (strIndex != str.length && (pattern[patternIndex] == str[strIndex] || pattern[patternIndex] == '.')) {
+            return match(str, strIndex + 1, pattern, patternIndex + 1);
+        }
+        return false;
+    }
+
+    public boolean isNumeric(char[] str) {
+        int len = str.length;
+        boolean sign = false, decimal = false, e = false;
+        for (int i = 0; i < len; i++) {
+            char c = str[i];
+            if (c == 'e' || c == 'E') {
+                // e后面一定要接数字
+                if (i == len - 1) {
+                    return false;
+                }
+                // 不能同时存在两个e
+                if (e) {
+                    return false;
+                }
+                e = true;
+            } else if (c == '+' || c == '-') {
+                // 第二次出现+-符号，则必须紧接在e之后
+                if (sign && str[i - 1] != 'e' && str[i - 1] != 'E') {
+                    return false;
+                }
+                // 第一次出现+-符号，且不是在字符串开头，则也必须紧接在e之后
+                if (!sign && i > 0 && str[i - 1] != 'e' && str[i - 1] != 'E') {
+                    return false;
+                }
+                sign = true;
+            } else if (c == '.') {
+                // e后面不能接小数点，小数点不能出现两次
+                if (e || decimal) {
+                    return false;
+                }
+                decimal = true;
+            } else if (c < '0' || c > '9') {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isNumeric2(char[] str) {
+        return String.valueOf(str).matches("[\\+\\-]?\\d*(\\.\\d+)?([eE][\\+\\-]?\\d+)?");
+    }
+
+    int[] hash = new int[256];
+    StringBuilder sb = new StringBuilder();
+
+    //Insert one char from stringstream
+    public void Insert(char ch) {
+        sb.append(ch);
+        hash[ch]++;
+    }
+
+    //return the first appearence once char in current stringstream
+    public char FirstAppearingOnce() {
+        for (char c : sb.toString().toCharArray()) {
+            if (hash[c] == 1) {
+                return c;
+            }
+        }
+        return '#';
+    }
+
+    public ListNode EntryNodeOfLoop(ListNode pHead) {
+        if (pHead == null) {
+            return null;
+        }
+
+        ListNode slow = pHead;
+        ListNode fast = pHead;
+        while (fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+            if (slow == fast) {
+                fast = pHead;
+                while (slow != fast) {
+                    slow = slow.next;
+                    fast = fast.next;
+                }
+                return slow;
+            }
+        }
+
+        return null;
+    }
+
+    public ListNode deleteDuplication(ListNode pHead) {
+        ListNode node = new ListNode(0);
+        node.next = pHead;
+
+        ListNode cur = node;
+        ListNode next = cur.next;
+        while (next != null) {
+            if (next.next != null && next.val == next.next.val) {
+                while (next.next != null && next.val == next.next.val) {
+                    next = next.next;
+                }
+                cur.next = next.next;
+                next = next.next;
+            } else {
+                cur = cur.next;
+                next = next.next;
+            }
+        }
+        return node.next;
+    }
+
+    public TreeLinkNode GetNext(TreeLinkNode pNode) {
+        if (pNode == null) {
+            return null;
+        }
+        if (pNode.right != null) {
+            //如果有右子树，则找右子树的最左节点
+            pNode = pNode.right;
+            while (pNode.left != null) {
+                pNode = pNode.left;
+            }
+            return pNode;
+        }
+
+        //没右子树，则找第一个当前节点是父节点左孩子的节点
+        while (pNode.next != null) {
+            if (pNode == pNode.next.left) {
+                return pNode.next;
+            }
+            pNode = pNode.next;
+        }
+        return null;
+    }
+
+    boolean isSymmetrical(TreeNode pRoot) {
+        if (pRoot == null) {
+            return true;
+        }
+        return isSymmetrical(pRoot.left, pRoot.right);
+    }
+
+    private boolean isSymmetrical(TreeNode left, TreeNode right) {
+        if (left == null && right == null) {
+            return true;
+        } else if (left == null || right == null) {
+            return false;
+        } else {
+            return left.val == right.val && isSymmetrical(left.left, right.right) && isSymmetrical(left.right, right.left);
+        }
+    }
+
+    boolean isSymmetrical2(TreeNode pRoot) {
+        if (pRoot == null) {
+            return true;
+        }
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(pRoot.left);
+        queue.offer(pRoot.right);
+        while (!queue.isEmpty()) {
+            TreeNode left = queue.poll();
+            TreeNode right = queue.poll();
+            if (left == null && right == null) {
+                continue;
+            }
+            if (left == null || right == null) {
+                return false;
+            }
+            if (left.val != right.val) {
+                return false;
+            }
+            queue.offer(left.left);
+            queue.offer(right.right);
+            queue.offer(left.right);
+            queue.offer(right.left);
+        }
+        return true;
+    }
+
+    public ArrayList<ArrayList<Integer>> PrintZ(TreeNode pRoot) {
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        if (pRoot == null) {
+            return res;
+        }
+        Stack<TreeNode> s1 = new Stack<>();
+        s1.push(pRoot);
+
+        Stack<TreeNode> s2 = new Stack<>();
+
+        int level = 1;
+        while (!s1.isEmpty() || !s2.isEmpty()) {
+            if (level % 2 == 1) {
+                ArrayList<Integer> list = new ArrayList<>();
+                while (!s1.isEmpty()) {
+                    TreeNode node = s1.pop();
+                    if (node != null) {
+                        list.add(node.val);
+                        s2.push(node.left);
+                        s2.push(node.right);
+                    }
+                }
+                if (!list.isEmpty()) {
+                    res.add(list);
+                    level++;
+                }
+            } else {
+                ArrayList<Integer> list = new ArrayList<>();
+                while (!s2.isEmpty()) {
+                    TreeNode node = s2.pop();
+                    if (node != null) {
+                        list.add(node.val);
+                        s1.push(node.right);
+                        s1.push(node.left);
+                    }
+                }
+                if (!list.isEmpty()) {
+                    res.add(list);
+                    level++;
+                }
+            }
+        }
+        return res;
+    }
+
+    ArrayList<ArrayList<Integer>> Print(TreeNode pRoot) {
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        if (pRoot == null) {
+            return res;
+        }
+
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(pRoot);
+
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            ArrayList<Integer> list = new ArrayList<>();
+            for (int j = 0; j < size; j++) {
+                TreeNode node = queue.poll();
+                if (node != null) {
+                    list.add(node.val);
+                }
+                if (node.left != null) {
+                    queue.offer(node.left);
+                }
+                if (node.right != null) {
+                    queue.offer(node.right);
+                }
+            }
+            res.add(list);
+        }
+        return res;
+    }
+
+    ArrayList<ArrayList<Integer>> Print2(TreeNode pRoot) {
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        Print2(pRoot, res, 0);
+        return res;
+    }
+
+    void Print2(TreeNode node, ArrayList<ArrayList<Integer>> res, int level) {
+        if (node != null) {
+            if (res.size() == level) {
+                res.add(new ArrayList<>());
+            }
+            res.get(level).add(node.val);
+            Print2(node.left, res, level + 1);
+            Print2(node.right, res, level + 1);
+        }
+    }
+
+    public static class Codec {
+
+        String Serialize(TreeNode root) {
+            StringBuilder sb = new StringBuilder();
+            Serialize(root, sb);
+            return sb.toString();
+        }
+
+        private void Serialize(TreeNode node, StringBuilder sb) {
+            if (node == null) {
+                sb.append("#").append(",");
+            } else {
+                sb.append(node.val).append(",");
+                Serialize(node.left, sb);
+                Serialize(node.right, sb);
+            }
+        }
+
+        TreeNode Deserialize(String str) {
+            return Deserialize(new LinkedList<>(Arrays.asList(str.split(","))));
+        }
+
+        private TreeNode Deserialize(Queue<String> list) {
+            if (list.isEmpty()) {
+                return null;
+            }
+            String s = list.poll();
+            if ("#".equals(s)) {
+                return null;
+            } else {
+                TreeNode node = new TreeNode(Integer.parseInt(s));
+                node.left = Deserialize(list);
+                node.right = Deserialize(list);
+                return node;
+            }
+        }
+    }
+
+    TreeNode KthNode(TreeNode pRoot, int k) {
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode node = pRoot;
+        while (node != null || !stack.isEmpty()) {
+            while (node != null) {
+                stack.push(node);
+                node = node.left;
+            }
+
+            node = stack.pop();
+            k--;
+            if (k == 0) {
+                return node;
+            }
+            node = node.right;
+        }
+        return null;
+    }
+
+    private PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+    private PriorityQueue<Integer> maxHeap = new PriorityQueue<>(15, new Comparator<Integer>() {
+        @Override
+        public int compare(Integer o1, Integer o2) {
+            return o2.compareTo(o1);
+        }
+    });
+    int count = 0;
+
+    public void Insert(Integer num) {
+        if (count % 2 == 0) {
+            maxHeap.offer(num);
+            int max = maxHeap.poll();
+            minHeap.offer(max);
+        } else {
+            minHeap.offer(num);
+            int min = minHeap.poll();
+            maxHeap.offer(min);
+        }
+        count++;
+    }
+
+    public Double GetMedian() {
+        if (count % 2 == 0) {
+            return (double) (minHeap.peek() + maxHeap.peek()) / 2;
+        } else {
+            return (double) minHeap.peek();
+        }
+    }
+
+    public ArrayList<Integer> maxInWindows(int[] num, int size) {
+        ArrayList<Integer> res = new ArrayList<>();
+        if (size == 0) {
+            return res;
+        }
+        int begin;
+        Deque<Integer> q = new LinkedList<>();
+        for (int i = 0; i < num.length; i++) {
+            begin = i - size + 1;
+            if (!q.isEmpty() && begin > q.peekFirst()) {
+                q.pollFirst();
+            }
+
+            while (!q.isEmpty() && num[q.peekLast()] <= num[i]) {
+                q.pollLast();
+            }
+            q.add(i);
+            if (begin >= 0) {
+                res.add(num[q.peekFirst()]);
+            }
+        }
+        return res;
+    }
+
+    public boolean hasPath(char[] matrix, int rows, int cols, char[] str) {
+        if (str.length == 0) {
+            return false;
+        }
+        int[] flag = new int[matrix.length];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (hasPath(matrix, rows, cols, i, j, str, 0, flag)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean hasPath(char[] matrix, int rows, int cols, int row, int col, char[] str, int index, int[] flag) {
+        int k = row * cols + col;
+        if (row < 0 || row >= rows || col < 0 || col >= cols || matrix[k] != str[index] || flag[k] == 1) {
+            return false;
+        }
+        if (str.length - 1 == index) {
+            return true;
+        } else {
+            flag[k] = 1;
+            if (hasPath(matrix, rows, cols, row - 1, col, str, index + 1, flag)
+                    || hasPath(matrix, rows, cols, row + 1, col, str, index + 1, flag)
+                    || hasPath(matrix, rows, cols, row, col - 1, str, index + 1, flag)
+                    || hasPath(matrix, rows, cols, row, col + 1, str, index + 1, flag)) {
+                return true;
+            }
+            flag[k] = 0;
+            return false;
+        }
+    }
+
+    public int movingCount(int threshold, int rows, int cols) {
+        boolean[][] track = new boolean[rows][cols];
+        return movingCount(threshold, rows, cols, 0, 0, track);
+    }
+
+    private int movingCount(int threshold, int rows, int cols, int row, int col, boolean[][] track) {
+        if (row < 0 || row >= rows || col < 0 || col >= cols || track[row][col] || sum(row) + sum(col) > threshold) {
+            return 0;
+        }
+
+        track[row][col] = true;
+        return movingCount(threshold, rows, cols, row - 1, col, track)
+                + movingCount(threshold, rows, cols, row + 1, col, track)
+                + movingCount(threshold, rows, cols, row, col - 1, track)
+                + movingCount(threshold, rows, cols, row, col + 1, track)
+                + 1;
+    }
+
+    private int sum(int n) {
+        int res = 0;
+        while (n != 0) {
+            res += n % 10;
+            n /= 10;
+        }
+        return res;
+    }
+
+    public int cutRope(int n) {
+        if (n == 2) {
+            return 1;
+        }
+        if (n == 3) {
+            return 2;
+        }
+        int[] dp = new int[n + 1];
+        dp[1] = 1;
+        dp[2] = 2;
+        dp[3] = 3;
+        int max = 0;
+        for (int i = 4; i <= n; i++) {
+            for (int j = 1; j <= i / 2; j++) {
+                max = Math.max(max, dp[j] * dp[i - j]);
+            }
+            dp[i] = max;
+        }
+        return dp[n];
+    }
+
+    public int cutRope2(int n) {
+        if (n == 2) {
+            return 1;
+        }
+        if (n == 3) {
+            return 2;
+        }
+        int x = n % 3;
+        int y = n / 3;
+        if (x == 0) {
+            return (int) Math.pow(3, y);
+        } else if (x == 1) {
+            return 2 * 2 * (int) Math.pow(3, y - 1);
+        } else {
+            return 2 * (int) Math.pow(3, y);
+        }
+    }
+
     public static void main(String[] args) {
         Solution s = new Solution();
         System.out.println(Integer.MIN_VALUE & (Integer.MIN_VALUE - 1));
         System.out.println(s.NumberOf1(Integer.MIN_VALUE));
         System.out.println(s.Sum(5));
         System.out.println(s.StrToInt("-156a156"));
+        System.out.println(s.match("".toCharArray(), ".*".toCharArray()));
+        System.out.println(s.isNumeric2("12e+4.3".toCharArray()));
+
+        TreeSolution.Codec codec = new TreeSolution.Codec();
+        TreeNode root = codec.deserialize("8,6,5,null,null,7,null,null,10,9,null,null,11,null,null");
+
+        Codec cd = new Codec();
+        TreeNode root2 = cd.Deserialize("8,6,5,#,#,7,#,#,10,9,#,#,11,#,#");
+
+        System.out.println(cd.Serialize(root));
+        System.out.println(codec.serialize(root2));
+
+        System.out.println(s.PrintZ(root2));
+        System.out.println(s.Print2(root2));
 
         char c = '1';
         System.out.println((int) c);

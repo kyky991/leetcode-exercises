@@ -1,12 +1,15 @@
 package com.zing.leetcode.explore.learn;
 
+import com.zing.structure.Node;
+import com.zing.structure.TreeNode;
+
 import java.util.*;
 
 /**
  * @author Zing
  * @date 2020-05-10
  */
-class TreeSolution {
+public class TreeSolution {
     public List<Integer> preorderTraversal(TreeNode root) {
         List<Integer> list = new ArrayList<>();
         if (root == null) {
@@ -489,7 +492,7 @@ class TreeSolution {
     /**
      * Serialize and Deserialize Binary Tree
      */
-    static class Codec {
+    public static class Codec {
         // Encodes a tree to a single string.
         public String serialize(TreeNode root) {
             StringBuilder sb = new StringBuilder();

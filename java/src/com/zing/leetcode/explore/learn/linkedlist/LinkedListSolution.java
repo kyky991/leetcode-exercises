@@ -1,5 +1,9 @@
 package com.zing.leetcode.explore.learn.linkedlist;
 
+import com.zing.structure.ListNode;
+import com.zing.structure.MultilevelNode;
+import com.zing.structure.RandomListNode;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -326,15 +330,15 @@ public class LinkedListSolution {
     /**
      * Copy List with Random Pointer
      */
-    public RandomNode copyRandomList(RandomNode head) {
-        Map<RandomNode, RandomNode> map = new HashMap<>();
+    public RandomListNode copyRandomList(RandomListNode head) {
+        Map<RandomListNode, RandomListNode> map = new HashMap<>();
 
-        RandomNode newNode = new RandomNode(0);
-        RandomNode cur = head;
-        RandomNode newCur = newNode;
+        RandomListNode newNode = new RandomListNode(0);
+        RandomListNode cur = head;
+        RandomListNode newCur = newNode;
 
         while (cur != null) {
-            RandomNode node = new RandomNode(cur.val);
+            RandomListNode node = new RandomListNode(cur.val);
             map.put(cur, node);
 
             newCur.next = node;
@@ -357,13 +361,13 @@ public class LinkedListSolution {
     /**
      * Copy List with Random Pointer
      */
-    public RandomNode copyRandomList2(RandomNode head) {
-        RandomNode cur = head;
-        RandomNode next = null;
+    public RandomListNode copyRandomList2(RandomListNode head) {
+        RandomListNode cur = head;
+        RandomListNode next = null;
 
         while (cur != null) {
             next = cur.next;
-            cur.next = new RandomNode(cur.val);
+            cur.next = new RandomListNode(cur.val);
             cur.next.next = next;
             cur = cur.next.next;
         }
@@ -377,8 +381,8 @@ public class LinkedListSolution {
         }
 
         cur = head;
-        RandomNode newHead = new RandomNode(0);
-        RandomNode newCur = newHead;
+        RandomListNode newHead = new RandomListNode(0);
+        RandomListNode newCur = newHead;
         while (cur != null) {
             next = cur.next.next;
 
